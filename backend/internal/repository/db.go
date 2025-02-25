@@ -14,7 +14,6 @@ func ConnectDB(databaseURL string) (*sql.DB, error) {
 		return nil, err
 	}
 
-	// Проверяем подключение
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
