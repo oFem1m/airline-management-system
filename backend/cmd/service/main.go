@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"time"
@@ -20,7 +21,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Ошибка подключения к БД: %v", err)
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Fatalf("Ошибка закрытия: %v", err)
+		}
+	}(db)
 
 	r := router.NewRouter(db)
 
