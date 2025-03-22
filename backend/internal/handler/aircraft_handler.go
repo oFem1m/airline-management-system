@@ -63,3 +63,18 @@ func (h *AircraftHandler) DeleteAircraft(w http.ResponseWriter, r *http.Request)
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+// GetAllAircrafts обрабатывает GET-запрос и возвращает список всех самолётов
+func (h *AircraftHandler) GetAllAircrafts(w http.ResponseWriter, r *http.Request) {
+	aircrafts, err := h.repo.GetAll()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(aircrafts); err != nil {
+		http.Error(w, "Ошибка при сериализации ответа", http.StatusInternalServerError)
+		return
+	}
+}

@@ -51,3 +51,30 @@ func (r *AircraftRepository) Delete(id int) error {
 
 	return nil
 }
+
+// GetAll возвращает список всех самолетов
+func (r *AircraftRepository) GetAll() ([]models.Aircraft, error) {
+	query := `
+		SELECT id, tail_number, model, capacity, manufacture_year
+		FROM Aircrafts
+	`
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("не удалось выполнить запрос GetAll: %w", err)
+	}
+	defer rows.Close()
+
+	var aircrafts []models.Aircraft
+	for rows.Next() {
+		var a models.Aircraft
+		if err := rows.Scan(&a.ID, &a.TailNumber, &a.Model, &a.Capacity, &a.ManufactureYear); err != nil {
+			return nil, fmt.Errorf("ошибка при чтении строки: %w", err)
+		}
+		aircrafts = append(aircrafts, a)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("ошибка при итерировании строк: %w", err)
+	}
+
+	return aircrafts, nil
+}
