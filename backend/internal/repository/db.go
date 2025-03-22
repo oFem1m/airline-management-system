@@ -7,7 +7,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// ConnectDB устанавливает соединение с базой данных по указанному URL.
+// ConnectDB устанавливает соединение с базой данных по URL.
 func ConnectDB(databaseURL string) (*sql.DB, error) {
 	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {
