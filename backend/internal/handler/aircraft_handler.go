@@ -41,7 +41,7 @@ func (h *AircraftHandler) CreateAircraft(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-// DeleteAircraft обрабатывает DELETE-запрос на удаление самолёта по ID
+// DeleteAircraft обрабатывает POST-запрос на удаление самолёта по ID
 func (h *AircraftHandler) DeleteAircraft(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]

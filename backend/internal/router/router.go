@@ -33,7 +33,7 @@ func NewRouter(db *sql.DB) http.Handler {
 	api.HandleFunc("/aircrafts", aircraftHandler.GetAllAircrafts).Methods("GET")
 
 	// DELETE /api/v1/aircraft/{id} - удаление самолёта
-	api.HandleFunc("/aircraft/{id}", aircraftHandler.DeleteAircraft).Methods("DELETE")
+	api.HandleFunc("/aircraft/{id}", aircraftHandler.DeleteAircraft).Methods("GET")
 
 	return r
 }
