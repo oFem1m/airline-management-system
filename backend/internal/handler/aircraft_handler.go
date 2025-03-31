@@ -78,3 +78,32 @@ func (h *AircraftHandler) GetAllAircrafts(w http.ResponseWriter, r *http.Request
 		return
 	}
 }
+
+// GetAircraft обрабатывает GET-запрос для получения одного самолёта по ID.
+func (h *AircraftHandler) GetAircraft(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	if idStr == "" {
+		http.Error(w, "Не указан ID самолёта", http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Некорректный ID самолёта", http.StatusBadRequest)
+		return
+	}
+
+	aircraft, err := h.repo.GetByID(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if aircraft == nil {
+		http.Error(w, "Самолёт не найден", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(aircraft)
+}

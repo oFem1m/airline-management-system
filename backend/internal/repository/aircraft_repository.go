@@ -3,6 +3,7 @@ package repository
 import (
 	"backend/internal/models"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -77,4 +78,22 @@ func (r *AircraftRepository) GetAll() ([]models.Aircraft, error) {
 	}
 
 	return aircrafts, nil
+}
+
+// GetByID возвращает запись самолёта по его ID.
+func (r *AircraftRepository) GetByID(id int) (*models.Aircraft, error) {
+	query := `
+		SELECT id, tail_number, model, capacity, manufacture_year
+		FROM Aircrafts
+		WHERE id = $1
+	`
+	var a models.Aircraft
+	err := r.db.QueryRow(query, id).Scan(&a.ID, &a.TailNumber, &a.Model, &a.Capacity, &a.ManufactureYear)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("ошибка при получении самолёта: %w", err)
+	}
+	return &a, nil
 }

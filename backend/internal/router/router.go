@@ -29,11 +29,14 @@ func NewRouter(db *sql.DB) http.Handler {
 	// POST /api/v1/aircraft - создание самолёта
 	api.HandleFunc("/aircraft", aircraftHandler.CreateAircraft).Methods("POST")
 
-	// GET /api/v1/aircraft – получить список всех самолётов
+	// GET /api/v1/aircraft/{id} – получить самолет
+	api.HandleFunc("/aircraft/{id}", aircraftHandler.GetAircraft).Methods("GET")
+
+	// GET /api/v1/aircrafts – получить список всех самолётов
 	api.HandleFunc("/aircrafts", aircraftHandler.GetAllAircrafts).Methods("GET")
 
 	// DELETE /api/v1/aircraft/{id} - удаление самолёта
-	api.HandleFunc("/aircraft/{id}", aircraftHandler.DeleteAircraft).Methods("GET")
+	api.HandleFunc("/aircraft/{id}", aircraftHandler.DeleteAircraft).Methods("DELETE")
 
 	return r
 }
