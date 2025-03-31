@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// AircraftHandler хранит методы для обработки HTTP-запросов к самолетам.
 type AircraftHandler struct {
 	repo *repository.AircraftRepository
 }

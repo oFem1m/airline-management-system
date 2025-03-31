@@ -19,8 +19,8 @@ CREATE TABLE Employees
     salary     NUMERIC(10, 2),
     email      VARCHAR(100) UNIQUE,
     phone      VARCHAR(20),
-    CONSTRAINT email_check CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
-    CONSTRAINT phone_number_check CHECK (phone ~ '^\\+?[0-9]{10,15}$')
+    CONSTRAINT email_check CHECK (email ~ E'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+    CONSTRAINT phone_number_check CHECK (phone ~ E'^\\+?[0-9]{10,15}$')
 );
 
 -- 3. Таблица Airports (Аэропорты)

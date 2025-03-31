@@ -1,1 +1,105 @@
-# Система управления авиакоманией
+# Система управления авиакомпанией
+# API Документация
+
+---
+## Самолеты
+
+### Добавление самолета
+
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/aircraft \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tail_number": "RA-12345",
+    "model": "Boeing 737",
+    "capacity": 180,
+    "manufacture_year": 2015
+  }'
+```
+
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/aircraft ^
+  -H "Content-Type: application/json" ^
+  -d "{\"tail_number\": \"RA-12345\", \"model\": \"Boeing 737\", \"capacity\": 180, \"manufacture_year\": 2015}"
+```
+
+### Получение списка самолетов
+```bash
+curl -X GET http://localhost:8080/api/v1/aircrafts
+```
+
+### Получение информации о конкретном самолете
+```bash
+curl -X GET http://localhost:8080/api/v1/aircraft/1
+```
+
+### Удаление самолета
+```bash
+curl -X DELETE http://localhost:8080/api/v1/aircraft/1
+```
+---
+## Сотрудники
+
+### Добавление сотрудника
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/employee \
+  -H "Content-Type: application/json" \
+  -d '{
+    "first_name": "John",
+    "last_name": "Doe",
+    "position": "Pilot",
+    "hire_date": "2023-03-10T00:00:00Z",
+    "salary": 100000,
+    "email": "john.doe@example.com",
+    "phone": "+12345678901"
+  }'
+```
+
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/employee ^
+  -H "Content-Type: application/json" ^
+  -d "{\"first_name\": \"John\", \"last_name\": \"Doe\", \"position\": \"Pilot\", \"hire_date\": \"2023-03-10T00:00:00Z\", \"salary\": 100000, \"email\": \"john.doe@example.com\", \"phone\": \"+12345678901\"}"
+```
+
+### Получение списка сотрудников
+```bash
+curl http://localhost:8080/api/v1/employees
+```
+
+### Получение информации о конкретном сотруднике
+```bash
+curl http://localhost:8080/api/v1/employee/1
+```
+
+### Обновление данных сотрудника
+**Ubuntu/Linux:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/employee/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "first_name": "John",
+    "last_name": "Doe",
+    "position": "Senior Pilot",
+    "hire_date": "2022-12-01T00:00:00Z",
+    "salary": 120000,
+    "email": "john.doe@example.com",
+    "phone": "+12345678901"
+  }'
+```
+
+**Windows:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/employee/1 ^
+  -H "Content-Type: application/json" ^
+  -d "{\"first_name\": \"John\", \"last_name\": \"Doe\", \"position\": \"Senior Pilot\", \"hire_date\": \"2022-12-01T00:00:00Z\", \"salary\": 120000, \"email\": \"john.doe@example.com\", \"phone\": \"+12345678901\"}"
+```
+
+### Удаление сотрудника
+```bash
+curl -X DELETE http://localhost:8080/api/v1/employee/1
+```
+---

@@ -23,7 +23,7 @@ func LoadConfig() (*Config, error) {
 	serverAddress := getEnv("SERVER_ADDRESS", ":8080")
 
 	dbUser := getEnv("DB_USER", "postgres")
-	dbPassword := getEnv("DB_PASSWORD", "yourpassword")
+	dbPassword := getEnv("DB_PASSWORD", "password")
 	dbHost := getEnv("DB_HOST", "localhost")
 	dbPort := getEnv("DB_PORT", "5432")
 	dbName := getEnv("DB_NAME", "Airline")
