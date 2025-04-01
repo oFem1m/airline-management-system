@@ -178,5 +178,35 @@ func NewRouter(db *sql.DB) http.Handler {
 	// DELETE – удаление бронирования
 	api.HandleFunc("/booking/{id}", bookingHandler.DeleteBooking).Methods("DELETE")
 
+	// --- Билеты ---
+
+	// Инициализируем репозиторий и обработчик для Ticket
+	ticketRepo := repository.NewTicketRepository(db)
+	ticketHandler := handler.NewTicketHandler(ticketRepo)
+
+	// POST – создание билета
+	api.HandleFunc("/ticket", ticketHandler.CreateTicket).Methods("POST")
+
+	// PUT – обновление билета по ID
+	api.HandleFunc("/ticket/{id}", ticketHandler.UpdateTicket).Methods("PUT")
+
+	// GET – получение билета по ID
+	api.HandleFunc("/ticket/{id}", ticketHandler.GetTicket).Methods("GET")
+
+	// GET – получение списка всех билетов
+	api.HandleFunc("/tickets", ticketHandler.GetAllTickets).Methods("GET")
+
+	// GET – получение билетов для конкретного пассажира
+	api.HandleFunc("/tickets/passenger/{passengerId}", ticketHandler.GetTicketsByPassenger).Methods("GET")
+
+	// GET – получение билетов на рейс по ID рейса
+	api.HandleFunc("/tickets/flight/{flightId}", ticketHandler.GetTicketsByFlight).Methods("GET")
+
+	// GET – получение билетов в бронировании по ID бронирования
+	api.HandleFunc("/tickets/booking/{bookingId}", ticketHandler.GetTicketsByBooking).Methods("GET")
+
+	// DELETE – удаление билета по ID
+	api.HandleFunc("/ticket/{id}", ticketHandler.DeleteTicket).Methods("DELETE")
+
 	return r
 }

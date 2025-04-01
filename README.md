@@ -401,6 +401,80 @@ curl -X DELETE http://localhost:8080/api/v1/booking/1
 
 ---
 
+## Билеты
+
+### Создание билета
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/ticket \
+  -H "Content-Type: application/json" \
+  -d '{
+    "flight_id": 1,
+    "passenger_id": 2,
+    "booking_id": 3,
+    "seat_number": "12A",
+    "price": 250.00
+  }'
+```
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/ticket ^
+  -H "Content-Type: application/json" ^
+  -d "{\"flight_id\": 1, \"passenger_id\": 2, \"booking_id\": 3, \"seat_number\": \"12A\", \"price\": 250.00}"
+```
+
+### Обновление билета
+**Ubuntu/Linux:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/ticket/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "flight_id": 1,
+    "passenger_id": 2,
+    "booking_id": 3,
+    "seat_number": "12B",
+    "price": 260.00,
+    "issue_date": "2023-05-01T12:00:00Z"
+  }'
+```
+**Windows:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/ticket/1 ^
+  -H "Content-Type: application/json" ^
+  -d "{\"flight_id\": 1, \"passenger_id\": 2, \"booking_id\": 3, \"seat_number\": \"12B\", \"price\": 260.00, \"issue_date\": \"2023-05-01T12:00:00Z\"}"
+```
+
+### Получение билета по ID
+```bash
+curl -X GET http://localhost:8080/api/v1/ticket/1
+```
+
+### Получение списка всех билетов
+```bash
+curl -X GET http://localhost:8080/api/v1/tickets
+```
+
+### Получение билетов для конкретного пассажира
+```bash
+curl -X GET http://localhost:8080/api/v1/tickets/passenger/2
+```
+
+### Получение билетов на рейс по ID рейса
+```bash
+curl -X GET http://localhost:8080/api/v1/tickets/flight/1
+```
+
+### Получение билетов в бронировании по ID бронирования
+```bash
+curl -X GET http://localhost:8080/api/v1/tickets/booking/3
+```
+
+### Удаление билета
+```bash
+curl -X DELETE http://localhost:8080/api/v1/ticket/1
+```
+
+
 
 
 
