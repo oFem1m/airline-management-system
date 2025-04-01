@@ -474,6 +474,74 @@ curl -X GET http://localhost:8080/api/v1/tickets/booking/3
 curl -X DELETE http://localhost:8080/api/v1/ticket/1
 ```
 
+---
+
+## Техническое обслуживание
+
+### Создание записи обслуживания
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/maintenance \
+  -H "Content-Type: application/json" \
+  -d '{
+    "aircraft_id": 1,
+    "maintenance_date": "2023-06-01T10:00:00Z",
+    "description": "Профилактический осмотр",
+    "performed_by": 2,
+    "next_maintenance_date": "2023-12-01T10:00:00Z"
+  }'
+```
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/maintenance ^
+  -H "Content-Type: application/json" ^
+  -d "{\"aircraft_id\": 1, \"maintenance_date\": \"2023-06-01T10:00:00Z\", \"description\": \"Профилактический осмотр\", \"performed_by\": 2, \"next_maintenance_date\": \"2023-12-01T10:00:00Z\"}"
+```
+
+### Обновление записи обслуживания
+**Ubuntu/Linux:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/maintenance/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "aircraft_id": 1,
+    "maintenance_date": "2023-06-01T10:00:00Z",
+    "description": "Обновленный комментарий",
+    "performed_by": 2,
+    "next_maintenance_date": "2023-12-15T10:00:00Z"
+  }'
+```
+**Windows:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/maintenance/1 ^
+  -H "Content-Type: application/json" ^
+  -d "{\"aircraft_id\": 1, \"maintenance_date\": \"2023-06-01T10:00:00Z\", \"description\": \"Обновленный комментарий\", \"performed_by\": 2, \"next_maintenance_date\": \"2023-12-15T10:00:00Z\"}"
+```
+
+### Получение обслуживания по ID
+```bash
+curl -X GET http://localhost:8080/api/v1/maintenance/1
+```
+
+### Получение списка всех обслуживаний
+```bash
+curl -X GET http://localhost:8080/api/v1/maintenances
+```
+
+### Получение обслуживаний для конкретного самолёта
+```bash
+curl -X GET http://localhost:8080/api/v1/maintenances/aircraft/1
+```
+
+### Получение обслуживаний, проведенных конкретным сотрудником
+```bash
+curl -X GET http://localhost:8080/api/v1/maintenances/employee/2
+```
+
+### Удаление обслуживания
+```bash
+curl -X DELETE http://localhost:8080/api/v1/maintenance/1
+```
 
 
 

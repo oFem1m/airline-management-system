@@ -208,5 +208,32 @@ func NewRouter(db *sql.DB) http.Handler {
 	// DELETE – удаление билета по ID
 	api.HandleFunc("/ticket/{id}", ticketHandler.DeleteTicket).Methods("DELETE")
 
+	// --- Обслуживание ---
+
+	// Инициализируем репозиторий и обработчик для Maintenance
+	maintenanceRepo := repository.NewMaintenanceRepository(db)
+	maintenanceHandler := handler.NewMaintenanceHandler(maintenanceRepo)
+
+	// POST – создание обслуживания
+	api.HandleFunc("/maintenance", maintenanceHandler.CreateMaintenance).Methods("POST")
+
+	// PUT – обновление обслуживания по ID
+	api.HandleFunc("/maintenance/{id}", maintenanceHandler.UpdateMaintenance).Methods("PUT")
+
+	// GET – получение обслуживания по ID
+	api.HandleFunc("/maintenance/{id}", maintenanceHandler.GetMaintenance).Methods("GET")
+
+	// GET – получение списка всех обслуживаний
+	api.HandleFunc("/maintenances", maintenanceHandler.GetAllMaintenance).Methods("GET")
+
+	// GET – получение обслуживаний для конкретного самолёта
+	api.HandleFunc("/maintenances/aircraft/{aircraftId}", maintenanceHandler.GetMaintenanceByAircraft).Methods("GET")
+
+	// GET – получение обслуживаний, проведенных конкретным сотрудником
+	api.HandleFunc("/maintenances/employee/{employeeId}", maintenanceHandler.GetMaintenanceByEmployee).Methods("GET")
+
+	// DELETE – удаление обслуживания по ID
+	api.HandleFunc("/maintenance/{id}", maintenanceHandler.DeleteMaintenance).Methods("DELETE")
+
 	return r
 }
