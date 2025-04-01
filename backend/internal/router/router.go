@@ -81,6 +81,7 @@ func NewRouter(db *sql.DB) http.Handler {
 
 	// --- Маршруты ---
 
+	// Инициализируем репозиторий и обработчик для Route
 	routeRepo := repository.NewRouteRepository(db)
 	routeHandler := handler.NewRouteHandler(routeRepo)
 
@@ -101,6 +102,33 @@ func NewRouter(db *sql.DB) http.Handler {
 
 	// GET – получить маршруты, связанные с конкретным аэропортом
 	api.HandleFunc("/routes/airport/{airportId}", routeHandler.GetRoutesByAirport).Methods("GET")
+
+	// --- Рейсы ---
+
+	// Инициализируем репозиторий и обработчик для Flight
+	flightRepo := repository.NewFlightRepository(db)
+	flightHandler := handler.NewFlightHandler(flightRepo)
+
+	// POST – создание рейса
+	api.HandleFunc("/flight", flightHandler.CreateFlight).Methods("POST")
+
+	// DELETE – удаление рейса по ID
+	api.HandleFunc("/flight/{id}", flightHandler.DeleteFlight).Methods("DELETE")
+
+	// GET – получение всех рейсов
+	api.HandleFunc("/flights", flightHandler.GetAllFlights).Methods("GET")
+
+	// GET – получение рейса по ID
+	api.HandleFunc("/flight/{id}", flightHandler.GetFlight).Methods("GET")
+
+	// GET – получение рейсов по route_id
+	api.HandleFunc("/flights/route/{routeId}", flightHandler.GetFlightsByRoute).Methods("GET")
+
+	// GET – получение рейсов для конкретного самолёта
+	api.HandleFunc("/flights/aircraft/{aircraftId}", flightHandler.GetFlightsByAircraft).Methods("GET")
+
+	// GET – получение рейсов для конкретного аэропорта
+	api.HandleFunc("/flights/airport/{airportId}", flightHandler.GetFlightsByAirport).Methods("GET")
 
 	return r
 }

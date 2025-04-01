@@ -204,3 +204,61 @@ curl -X DELETE http://localhost:8080/api/v1/route/1
 ```
 
 ---
+
+## Рейсы
+
+### Добавление рейса
+
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/flight \
+  -H "Content-Type: application/json" \
+  -d '{
+    "flight_number": "SU123",
+    "aircraft_id": 1,
+    "route_id": 2,
+    "departure_time": "2023-04-01T10:00:00Z",
+    "arrival_time": "2023-04-01T14:00:00Z",
+    "status": "scheduled"
+  }'
+```
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/flight ^ 
+  -H "Content-Type: application/json" ^ 
+  -d "{\"flight_number\": \"SU123\", \"aircraft_id\": 1, \"route_id\": 2, \"departure_time\": \"2023-04-01T10:00:00Z\", \"arrival_time\": \"2023-04-01T14:00:00Z\", \"status\": \"scheduled\"}"
+```
+
+### Получение списка всех рейсов
+```bash
+curl -X GET http://localhost:8080/api/v1/flights
+```
+
+### Получение рейса по ID
+```bash
+curl -X GET http://localhost:8080/api/v1/flight/1
+```
+
+### Получение рейсов по маршруту (Route ID)
+```bash
+curl -X GET http://localhost:8080/api/v1/flights/route/2
+```
+
+### Получение рейсов для самолёта (Aircraft ID)
+```bash
+curl -X GET http://localhost:8080/api/v1/flights/aircraft/1
+```
+
+### Получение рейсов для аэропорта (Airport ID)
+```bash
+curl -X GET http://localhost:8080/api/v1/flights/airport/1
+```
+
+### Удаление рейса
+```bash
+curl -X DELETE http://localhost:8080/api/v1/flight/1
+```
+
+---
+
+
