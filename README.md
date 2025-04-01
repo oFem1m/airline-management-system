@@ -164,6 +164,25 @@ curl -X POST http://localhost:8080/api/v1/route ^
   -d "{\"departure_airport_id\": 1, \"arrival_airport_id\": 2, \"distance\": 677, \"duration_minutes\": 94}"
 ```
 
+### Обновление маршрута
+**Ubuntu/Linux:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/route/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "departure_airport_id": 1,
+    "arrival_airport_id": 2,
+    "distance": 677,
+    "duration_minutes": 100
+  }'
+```
+**Windows:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/route/1 ^ 
+  -H "Content-Type: application/json" ^ 
+  -d "{\"departure_airport_id\": 1, \"arrival_airport_id\": 2, \"distance\": 677, \"duration_minutes\": 100}"
+```
+
 ### Получение списка всех маршрутов
 ```bash
 curl -X GET http://localhost:8080/api/v1/routes

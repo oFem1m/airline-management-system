@@ -107,7 +107,7 @@ func (r *RouteRepository) GetByID(id int) (*models.Route, error) {
 }
 
 // GetRoutesByAirport возвращает маршруты, в которых участвует указанный аэропорт.
-// Ищем как по отправлению, так и по прибытия.
+// Ищем как по отправлению, так и по прибытию.
 func (r *RouteRepository) GetRoutesByAirport(airportID int) ([]models.Route, error) {
 	query := `
 		SELECT id, departure_airport_id, arrival_airport_id, distance, duration_minutes
@@ -138,4 +138,34 @@ func (r *RouteRepository) GetRoutesByAirport(airportID int) ([]models.Route, err
 		return nil, fmt.Errorf("ошибка при итерации по маршрутам: %w", err)
 	}
 	return routes, nil
+}
+
+// Update обновляет данные маршрута.
+func (r *RouteRepository) Update(route *models.Route) error {
+	query := `
+		UPDATE Route
+		SET departure_airport_id = $1,
+		    arrival_airport_id = $2,
+		    distance = $3,
+		    duration_minutes = $4
+		WHERE id = $5
+	`
+	result, err := r.db.Exec(query,
+		route.DepartureAirportID,
+		route.ArrivalAirportID,
+		route.Distance,
+		route.DurationMinutes,
+		route.ID,
+	)
+	if err != nil {
+		return fmt.Errorf("не удалось обновить маршрут: %w", err)
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("не удалось обновить маршрут: %w", err)
+	}
+	if rowsAffected == 0 {
+		return fmt.Errorf("маршрут с id=%d не найден", route.ID)
+	}
+	return nil
 }

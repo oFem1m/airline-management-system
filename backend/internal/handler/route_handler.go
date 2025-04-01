@@ -114,3 +114,30 @@ func (h *RouteHandler) GetRoutesByAirport(w http.ResponseWriter, r *http.Request
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(routes)
 }
+
+// UpdateRoute обрабатывает PUT-запрос для обновления маршрута по его ID.
+func (h *RouteHandler) UpdateRoute(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	if idStr == "" {
+		http.Error(w, "Не указан ID маршрута", http.StatusBadRequest)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Некорректный ID маршрута", http.StatusBadRequest)
+		return
+	}
+	var route models.Route
+	if err := json.NewDecoder(r.Body).Decode(&route); err != nil {
+		http.Error(w, "Неверный формат запроса", http.StatusBadRequest)
+		return
+	}
+	route.ID = id
+	if err := h.repo.Update(&route); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(route)
+}

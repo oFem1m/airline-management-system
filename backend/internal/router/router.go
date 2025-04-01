@@ -87,6 +87,9 @@ func NewRouter(db *sql.DB) http.Handler {
 	// POST – создание маршрута
 	api.HandleFunc("/route", routeHandler.CreateRoute).Methods("POST")
 
+	// PUT /api/v1/route/{id} – обновление маршрута по ID
+	api.HandleFunc("/route/{id}", routeHandler.UpdateRoute).Methods("PUT")
+
 	// DELETE – удаление маршрута по ID
 	api.HandleFunc("/route/{id}", routeHandler.DeleteRoute).Methods("DELETE")
 
