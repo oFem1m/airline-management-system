@@ -2,10 +2,10 @@
 # API Документация
 
 ---
+
 ## Самолеты
 
 ### Добавление самолета
-
 **Ubuntu/Linux:**
 ```bash
 curl -X POST http://localhost:8080/api/v1/aircraft \
@@ -17,7 +17,6 @@ curl -X POST http://localhost:8080/api/v1/aircraft \
     "manufacture_year": 2015
   }'
 ```
-
 **Windows:**
 ```bash
 curl -X POST http://localhost:8080/api/v1/aircraft ^
@@ -39,7 +38,9 @@ curl -X GET http://localhost:8080/api/v1/aircraft/1
 ```bash
 curl -X DELETE http://localhost:8080/api/v1/aircraft/1
 ```
+
 ---
+
 ## Сотрудники
 
 ### Добавление сотрудника
@@ -57,7 +58,6 @@ curl -X POST http://localhost:8080/api/v1/employee \
     "phone": "+12345678901"
   }'
 ```
-
 **Windows:**
 ```bash
 curl -X POST http://localhost:8080/api/v1/employee ^
@@ -90,7 +90,6 @@ curl -X PUT http://localhost:8080/api/v1/employee/1 \
     "phone": "+12345678901"
   }'
 ```
-
 **Windows:**
 ```bash
 curl -X PUT http://localhost:8080/api/v1/employee/1 ^
@@ -102,11 +101,12 @@ curl -X PUT http://localhost:8080/api/v1/employee/1 ^
 ```bash
 curl -X DELETE http://localhost:8080/api/v1/employee/1
 ```
+
 ---
+
 ## Аэропорты
 
 ### Добавление аэропорта
-
 **Ubuntu/Linux:**
 ```bash
 curl -X POST http://localhost:8080/api/v1/airport \
@@ -119,7 +119,6 @@ curl -X POST http://localhost:8080/api/v1/airport \
     "timezone": "Europe/Moscow"
   }'
 ```
-
 **Windows:**
 ```bash
 curl -X POST http://localhost:8080/api/v1/airport ^ 
@@ -140,6 +139,49 @@ curl -X GET http://localhost:8080/api/v1/airports
 ### Удаление аэропорта
 ```bash
 curl -X DELETE http://localhost:8080/api/v1/airport/1
+```
+
+---
+
+## Маршруты
+
+### Добавление маршрута
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/route \
+  -H "Content-Type: application/json" \
+  -d '{
+    "departure_airport_id": 1,
+    "arrival_airport_id": 2,
+    "distance": 677,
+    "duration_minutes": 94
+  }'
+```
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/route ^ 
+  -H "Content-Type: application/json" ^ 
+  -d "{\"departure_airport_id\": 1, \"arrival_airport_id\": 2, \"distance\": 677, \"duration_minutes\": 94}"
+```
+
+### Получение списка всех маршрутов
+```bash
+curl -X GET http://localhost:8080/api/v1/routes
+```
+
+### Получение маршрута по ID
+```bash
+curl -X GET http://localhost:8080/api/v1/route/1
+```
+
+### Получение маршрутов для конкретного аэропорта
+```bash
+curl -X GET http://localhost:8080/api/v1/routes/airport/1
+```
+
+### Удаление маршрута
+```bash
+curl -X DELETE http://localhost:8080/api/v1/route/1
 ```
 
 ---

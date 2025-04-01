@@ -79,5 +79,25 @@ func NewRouter(db *sql.DB) http.Handler {
 	// DELETE - удаление аэропорта
 	api.HandleFunc("/airport/{id}", airportHandler.DeleteAirport).Methods("DELETE")
 
+	// --- Маршруты ---
+
+	routeRepo := repository.NewRouteRepository(db)
+	routeHandler := handler.NewRouteHandler(routeRepo)
+
+	// POST – создание маршрута
+	api.HandleFunc("/route", routeHandler.CreateRoute).Methods("POST")
+
+	// DELETE – удаление маршрута по ID
+	api.HandleFunc("/route/{id}", routeHandler.DeleteRoute).Methods("DELETE")
+
+	// GET – получить список всех маршрутов
+	api.HandleFunc("/routes", routeHandler.GetAllRoutes).Methods("GET")
+
+	// GET – получить маршрут по ID
+	api.HandleFunc("/route/{id}", routeHandler.GetRoute).Methods("GET")
+
+	// GET – получить маршруты, связанные с конкретным аэропортом
+	api.HandleFunc("/routes/airport/{airportId}", routeHandler.GetRoutesByAirport).Methods("GET")
+
 	return r
 }
