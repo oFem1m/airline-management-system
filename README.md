@@ -208,7 +208,6 @@ curl -X DELETE http://localhost:8080/api/v1/route/1
 ## Рейсы
 
 ### Добавление рейса
-
 **Ubuntu/Linux:**
 ```bash
 curl -X POST http://localhost:8080/api/v1/flight \
@@ -227,6 +226,27 @@ curl -X POST http://localhost:8080/api/v1/flight \
 curl -X POST http://localhost:8080/api/v1/flight ^ 
   -H "Content-Type: application/json" ^ 
   -d "{\"flight_number\": \"SU123\", \"aircraft_id\": 1, \"route_id\": 2, \"departure_time\": \"2023-04-01T10:00:00Z\", \"arrival_time\": \"2023-04-01T14:00:00Z\", \"status\": \"scheduled\"}"
+```
+
+### Обновление рейса
+**Ubuntu/Linux:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/flight/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "flight_number": "SU123",
+    "aircraft_id": 1,
+    "route_id": 2,
+    "departure_time": "2023-04-01T10:00:00Z",
+    "arrival_time": "2023-04-01T14:00:00Z",
+    "status": "departed"
+  }'
+```
+**Windows:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/flight/1 ^ 
+  -H "Content-Type: application/json" ^ 
+  -d "{\"flight_number\": \"SU123\", \"aircraft_id\": 1, \"route_id\": 2, \"departure_time\": \"2023-04-01T10:00:00Z\", \"arrival_time\": \"2023-04-01T14:00:00Z\", \"status\": \"departed\"}"
 ```
 
 ### Получение списка всех рейсов
@@ -260,5 +280,66 @@ curl -X DELETE http://localhost:8080/api/v1/flight/1
 ```
 
 ---
+
+## Пассажиры
+
+### Добавление пассажира
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/passenger \
+  -H "Content-Type: application/json" \
+  -d '{
+    "first_name": "Alice",
+    "last_name": "Smith",
+    "email": "alice.smith@example.com",
+    "phone": "+12345678901",
+    "passport_number": "AB1234567"
+  }'
+```
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/passenger ^
+  -H "Content-Type: application/json" ^
+  -d "{\"first_name\": \"Alice\", \"last_name\": \"Smith\", \"email\": \"alice.smith@example.com\", \"phone\": \"+12345678901\", \"passport_number\": \"AB1234567\"}"
+```
+
+### Получение списка всех пассажиров
+```bash
+curl -X GET http://localhost:8080/api/v1/passengers
+```
+
+### Получение пассажира по ID
+```bash
+curl -X GET http://localhost:8080/api/v1/passenger/1
+```
+
+### Обновление данных пассажира
+
+**Ubuntu/Linux:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/passenger/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "first_name": "Alice",
+    "last_name": "Smith",
+    "email": "alice.new@example.com",
+    "phone": "+12345678902",
+    "passport_number": "AB1234567"
+  }'
+```
+**Windows:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/passenger/1 ^
+  -H "Content-Type: application/json" ^
+  -d "{\"first_name\": \"Alice\", \"last_name\": \"Smith\", \"email\": \"alice.new@example.com\", \"phone\": \"+12345678902\", \"passport_number\": \"AB1234567\"}"
+```
+
+### Удаление пассажира
+```bash
+curl -X DELETE http://localhost:8080/api/v1/passenger/1
+```
+
+---
+
 
 

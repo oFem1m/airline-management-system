@@ -35,6 +35,37 @@ func (h *FlightHandler) CreateFlight(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(flight)
 }
 
+// UpdateFlight обрабатывает PUT-запрос для обновления информации о рейсе по его ID.
+func (h *FlightHandler) UpdateFlight(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	if idStr == "" {
+		http.Error(w, "Не указан ID рейса", http.StatusBadRequest)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Некорректный ID рейса", http.StatusBadRequest)
+		return
+	}
+
+	var flight models.Flight
+	if err := json.NewDecoder(r.Body).Decode(&flight); err != nil {
+		http.Error(w, "Неверный формат запроса", http.StatusBadRequest)
+		return
+	}
+	// Устанавливаем ID, полученный из URL
+	flight.ID = id
+
+	if err := h.repo.Update(&flight); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(flight)
+}
+
 // DeleteFlight обрабатывает DELETE-запрос для удаления рейса по ID.
 func (h *FlightHandler) DeleteFlight(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)

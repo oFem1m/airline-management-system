@@ -75,8 +75,8 @@ CREATE TABLE Passengers
     email           VARCHAR(100) UNIQUE,
     phone           VARCHAR(20),
     passport_number VARCHAR(50)
-    CONSTRAINT email_check CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
-    CONSTRAINT phone_number_check CHECK (phone ~ '^\\+?[0-9]{10,15}$')
+    CONSTRAINT email_check CHECK (email ~ E'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+    CONSTRAINT phone_number_check CHECK (phone ~ E'^\\+?[0-9]{10,15}$')
 );
 
 -- 7. Таблица Booking (Бронирование)

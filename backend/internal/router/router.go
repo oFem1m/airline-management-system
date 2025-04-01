@@ -112,6 +112,9 @@ func NewRouter(db *sql.DB) http.Handler {
 	// POST – создание рейса
 	api.HandleFunc("/flight", flightHandler.CreateFlight).Methods("POST")
 
+	// PUT – обновление рейса по ID
+	api.HandleFunc("/flight/{id}", flightHandler.UpdateFlight).Methods("PUT")
+
 	// DELETE – удаление рейса по ID
 	api.HandleFunc("/flight/{id}", flightHandler.DeleteFlight).Methods("DELETE")
 
@@ -129,6 +132,27 @@ func NewRouter(db *sql.DB) http.Handler {
 
 	// GET – получение рейсов для конкретного аэропорта
 	api.HandleFunc("/flights/airport/{airportId}", flightHandler.GetFlightsByAirport).Methods("GET")
+
+	// --- Пассажиры ---
+
+	// Инициализируем репозиторий и обработчик для Passenger
+	passengerRepo := repository.NewPassengerRepository(db)
+	passengerHandler := handler.NewPassengerHandler(passengerRepo)
+
+	// POST – создание пассажира
+	api.HandleFunc("/passenger", passengerHandler.CreatePassenger).Methods("POST")
+
+	// GET – получение списка всех пассажиров
+	api.HandleFunc("/passengers", passengerHandler.GetAllPassengers).Methods("GET")
+
+	// GET – получение пассажира по ID
+	api.HandleFunc("/passenger/{id}", passengerHandler.GetPassenger).Methods("GET")
+
+	// PUT – обновление данных пассажира по ID
+	api.HandleFunc("/passenger/{id}", passengerHandler.UpdatePassenger).Methods("PUT")
+
+	// DELETE – удаление пассажира по ID
+	api.HandleFunc("/passenger/{id}", passengerHandler.DeletePassenger).Methods("DELETE")
 
 	return r
 }

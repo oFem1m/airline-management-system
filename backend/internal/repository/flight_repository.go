@@ -37,6 +37,40 @@ func (r *FlightRepository) Create(flight *models.Flight) error {
 	return nil
 }
 
+// Update обновляет данные рейса по его ID.
+func (r *FlightRepository) Update(flight *models.Flight) error {
+	query := `
+		UPDATE Flights
+		SET flight_number = $1,
+		    aircraft_id = $2,
+		    route_id = $3,
+		    departure_time = $4,
+		    arrival_time = $5,
+		    status = $6
+		WHERE id = $7
+	`
+	result, err := r.db.Exec(query,
+		flight.FlightNumber,
+		flight.AircraftID,
+		flight.RouteID,
+		flight.DepartureTime,
+		flight.ArrivalTime,
+		flight.Status,
+		flight.ID,
+	)
+	if err != nil {
+		return fmt.Errorf("не удалось обновить рейс: %w", err)
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("не удалось обновить рейс: %w", err)
+	}
+	if rowsAffected == 0 {
+		return fmt.Errorf("рейс с id=%d не найден", flight.ID)
+	}
+	return nil
+}
+
 // Delete удаляет рейс по ID.
 func (r *FlightRepository) Delete(id int) error {
 	query := `DELETE FROM Flights WHERE id = $1`
