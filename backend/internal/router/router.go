@@ -154,5 +154,29 @@ func NewRouter(db *sql.DB) http.Handler {
 	// DELETE – удаление пассажира по ID
 	api.HandleFunc("/passenger/{id}", passengerHandler.DeletePassenger).Methods("DELETE")
 
+	// --- Бронирования ---
+
+	// Инициализируем репозиторий и обработчик для Booking
+	bookingRepo := repository.NewBookingRepository(db)
+	bookingHandler := handler.NewBookingHandler(bookingRepo)
+
+	// POST – создание бронирования
+	api.HandleFunc("/booking", bookingHandler.CreateBooking).Methods("POST")
+
+	// PUT – обновление бронирования
+	api.HandleFunc("/booking/{id}", bookingHandler.UpdateBooking).Methods("PUT")
+
+	// GET – получение бронирования по ID
+	api.HandleFunc("/booking/{id}", bookingHandler.GetBooking).Methods("GET")
+
+	// GET – получение всех бронирований
+	api.HandleFunc("/bookings", bookingHandler.GetAllBookings).Methods("GET")
+
+	// GET – получение бронирований для конкретного пассажира
+	api.HandleFunc("/bookings/passenger/{passengerId}", bookingHandler.GetBookingsByPassenger).Methods("GET")
+
+	// DELETE – удаление бронирования
+	api.HandleFunc("/booking/{id}", bookingHandler.DeleteBooking).Methods("DELETE")
+
 	return r
 }

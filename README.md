@@ -341,5 +341,67 @@ curl -X DELETE http://localhost:8080/api/v1/passenger/1
 
 ---
 
+## Бронирования
+
+### Создание бронирования
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/booking \
+  -H "Content-Type: application/json" \
+  -d '{
+    "passenger_id": 1,
+    "booking_date": "2023-05-01T12:00:00Z",
+    "status": "pending"
+  }'
+```
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/booking ^
+  -H "Content-Type: application/json" ^
+  -d "{\"passenger_id\": 1, \"booking_date\": \"2023-05-01T12:00:00Z\", \"status\": \"pending\"}"
+```
+
+### Обновление бронирования
+**Ubuntu/Linux:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/booking/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "passenger_id": 1,
+    "booking_date": "2023-05-01T12:00:00Z",
+    "status": "confirmed"
+  }'
+```
+**Windows:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/booking/1 ^
+  -H "Content-Type: application/json" ^
+  -d "{\"passenger_id\": 1, \"booking_date\": \"2023-05-01T12:00:00Z\", \"status\": \"confirmed\"}"
+```
+
+### Получение бронирования по ID
+```bash
+curl -X GET http://localhost:8080/api/v1/booking/1
+```
+
+### Получение списка всех бронирований
+```bash
+curl -X GET http://localhost:8080/api/v1/bookings
+```
+
+### Получение бронирований для конкретного пассажира
+```bash
+curl -X GET http://localhost:8080/api/v1/bookings/passenger/1
+```
+
+### Удаление бронирования
+```bash
+curl -X DELETE http://localhost:8080/api/v1/booking/1
+```
+
+---
+
+
+
 
 
