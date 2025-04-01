@@ -61,5 +61,23 @@ func NewRouter(db *sql.DB) http.Handler {
 	// DELETE - удалить сотрудника
 	api.HandleFunc("/employee/{id}", employeeHandler.DeleteEmployee).Methods("DELETE")
 
+	// --- Аэропорты ---
+
+	// Инициализируем репозиторий и обработчик для Airport
+	airportRepo := repository.NewAirportRepository(db)
+	airportHandler := handler.NewAirportHandler(airportRepo)
+
+	// POST - создание аэропорта
+	api.HandleFunc("/airport", airportHandler.CreateAirport).Methods("POST")
+
+	// GET – получить аэропорт
+	api.HandleFunc("/airport/{id}", airportHandler.GetAirport).Methods("GET")
+
+	// GET – получить список всех аэропортов
+	api.HandleFunc("/airports", airportHandler.GetAllAirports).Methods("GET")
+
+	// DELETE - удаление аэропорта
+	api.HandleFunc("/airport/{id}", airportHandler.DeleteAirport).Methods("DELETE")
+
 	return r
 }

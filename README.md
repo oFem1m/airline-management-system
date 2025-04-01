@@ -103,3 +103,43 @@ curl -X PUT http://localhost:8080/api/v1/employee/1 ^
 curl -X DELETE http://localhost:8080/api/v1/employee/1
 ```
 ---
+## Аэропорты
+
+### Добавление аэропорта
+
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/airport \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sheremetyevo International Airport",
+    "code": "SVO",
+    "city": "Moscow",
+    "country": "Russia",
+    "timezone": "Europe/Moscow"
+  }'
+```
+
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/airport ^ 
+  -H "Content-Type: application/json" ^ 
+  -d "{\"name\": \"Sheremetyevo International Airport\", \"code\": \"SVO\", \"city\": \"Moscow\", \"country\": \"Russia\", \"timezone\": \"Europe/Moscow\"}"
+```
+
+### Получение информации о конкретном аэропорте
+```bash
+curl -X GET http://localhost:8080/api/v1/airport/1
+```
+
+### Получение списка всех аэропортов
+```bash
+curl -X GET http://localhost:8080/api/v1/airports
+```
+
+### Удаление аэропорта
+```bash
+curl -X DELETE http://localhost:8080/api/v1/airport/1
+```
+
+---
