@@ -49,9 +49,11 @@ CREATE TABLE Route
     distance             INT, -- расстояние в км
     duration_minutes     INT, -- длительность полёта в минутах
     CONSTRAINT fk_departure_airport FOREIGN KEY (departure_airport_id)
-        REFERENCES Airports (id),
+        REFERENCES Airports (id)
+        ON DELETE CASCADE,
     CONSTRAINT fk_arrival_airport FOREIGN KEY (arrival_airport_id)
         REFERENCES Airports (id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Flights
