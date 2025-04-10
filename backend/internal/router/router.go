@@ -73,6 +73,9 @@ func NewRouter(db *sql.DB) http.Handler {
 	// GET – получить аэропорт
 	api.HandleFunc("/airport/{id}", airportHandler.GetAirport).Methods("GET")
 
+	// PUT – обновление информации об аэропорте
+	api.HandleFunc("/airport/{id}", airportHandler.UpdateAirport).Methods("PUT")
+
 	// GET – получить список всех аэропортов
 	api.HandleFunc("/airports", airportHandler.GetAllAirports).Methods("GET")
 

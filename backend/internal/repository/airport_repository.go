@@ -38,6 +38,35 @@ func (r *AirportRepository) Create(airport *models.Airport) error {
 	return nil
 }
 
+// Update обновляет данные об аэропорте.
+func (r *AirportRepository) Update(airport *models.Airport) error {
+	query := `
+		UPDATE Airports
+		SET name = $1,
+		    code = $2,
+		    city = $3,
+		    country = $4,
+		    timezone = $5
+		WHERE id = $6
+	`
+	result, err := r.db.Exec(query,
+		airport.Name,
+		airport.Code,
+		airport.City,
+		airport.Country,
+		airport.Timezone,
+		airport.ID,
+	)
+	if err != nil {
+		return fmt.Errorf("не удалось обновить запись в Airports: %w", err)
+	}
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		return fmt.Errorf("запись с id=%d не найдена", airport.ID)
+	}
+	return nil
+}
+
 // Delete удаляет запись об аэропорте по ID
 func (r *AirportRepository) Delete(id int) error {
 	query := `DELETE FROM Airports WHERE id = $1`

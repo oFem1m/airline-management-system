@@ -126,6 +126,26 @@ curl -X POST http://localhost:8080/api/v1/airport ^
   -d "{\"name\": \"Sheremetyevo International Airport\", \"code\": \"SVO\", \"city\": \"Moscow\", \"country\": \"Russia\", \"timezone\": \"Europe/Moscow\"}"
 ```
 
+### Обновление информации об аэропорте
+**Ubuntu/Linux:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/airport/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Airport Name",
+    "code": "NEW",
+    "city": "Updated City",
+    "country": "Updated Country",
+    "timezone": "Europe/Updated"
+  }'
+```
+**Windows:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/airport/1 ^ 
+  -H "Content-Type: application/json" ^ 
+  -d "{\"name\": \"Updated Airport Name\", \"code\": \"NEW\", \"city\": \"Updated City\", \"country\": \"Updated Country\", \"timezone\": \"Europe/Updated\"}"
+```
+
 ### Получение информации о конкретном аэропорте
 ```bash
 curl -X GET http://localhost:8080/api/v1/airport/1
