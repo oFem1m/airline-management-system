@@ -61,6 +61,22 @@ func NewRouter(db *sql.DB) http.Handler {
 	// DELETE - удалить сотрудника
 	api.HandleFunc("/employee/{id}", employeeHandler.DeleteEmployee).Methods("DELETE")
 
+	// --- Роли ---
+
+	// Инициализируем репозиторий и обработчик для Role
+	roleRepo := repository.NewRoleRepository(db)
+	roleHandler := handler.NewRoleHandler(roleRepo)
+
+	api.HandleFunc("/role", roleHandler.CreateRole).Methods("POST")
+
+	api.HandleFunc("/role/{id}", roleHandler.UpdateRole).Methods("PUT")
+
+	api.HandleFunc("/role/{id}", roleHandler.GetRole).Methods("GET")
+
+	api.HandleFunc("/roles", roleHandler.GetAllRoles).Methods("GET")
+
+	api.HandleFunc("/role/{id}", roleHandler.DeleteRole).Methods("DELETE")
+
 	// --- Аэропорты ---
 
 	// Инициализируем репозиторий и обработчик для Airport
@@ -237,6 +253,20 @@ func NewRouter(db *sql.DB) http.Handler {
 
 	// DELETE – удаление обслуживания по ID
 	api.HandleFunc("/maintenance/{id}", maintenanceHandler.DeleteMaintenance).Methods("DELETE")
+
+	// --- Экипажи (FlightCrew) ---
+
+	// Инициализируем репозиторий и обработчик для FlightCrew
+	flightCrewRepo := repository.NewFlightCrewRepository(db)
+	flightCrewHandler := handler.NewFlightCrewHandler(flightCrewRepo)
+
+	api.HandleFunc("/flightcrew", flightCrewHandler.AssignEmployee).Methods("POST")
+
+	api.HandleFunc("/flightcrew", flightCrewHandler.RemoveEmployee).Methods("DELETE") // query-параметры flight_id и employee_id
+
+	api.HandleFunc("/flightcrew/flight/{flight_id}", flightCrewHandler.GetEmployeesByFlight).Methods("GET")
+
+	api.HandleFunc("/flightcrew/employee/{employee_id}", flightCrewHandler.GetFlightsByEmployee).Methods("GET")
 
 	return r
 }
