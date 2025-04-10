@@ -1,4 +1,3 @@
--- 1. Таблица Aircrafts (Борты)
 CREATE TABLE Aircrafts
 (
     id               SERIAL PRIMARY KEY,
@@ -8,22 +7,30 @@ CREATE TABLE Aircrafts
     manufacture_year INT
 );
 
--- 2. Таблица Employees (Сотрудники)
+CREATE TABLE Roles
+(
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT
+);
+
 CREATE TABLE Employees
 (
     id         SERIAL PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name  VARCHAR(50) NOT NULL,
-    position   VARCHAR(50),
+    role_id    INT,
     hire_date  DATE,
     salary     NUMERIC(10, 2),
     email      VARCHAR(100) UNIQUE,
     phone      VARCHAR(20),
     CONSTRAINT email_check CHECK (email ~ E'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
-    CONSTRAINT phone_number_check CHECK (phone ~ E'^\\+?[0-9]{10,15}$')
+    CONSTRAINT phone_number_check CHECK (phone ~ E'^\\+?[0-9]{10,15}$'),
+    CONSTRAINT fk_employee_role FOREIGN KEY (role_id)
+        REFERENCES Roles (id)
+        ON DELETE SET NULL
 );
 
--- 3. Таблица Airports (Аэропорты)
 CREATE TABLE Airports
 (
     id       SERIAL PRIMARY KEY,
@@ -34,7 +41,6 @@ CREATE TABLE Airports
     timezone VARCHAR(50)
 );
 
--- 4. Таблица Route (Маршрут)
 CREATE TABLE Route
 (
     id                   SERIAL PRIMARY KEY,
@@ -48,7 +54,6 @@ CREATE TABLE Route
         REFERENCES Airports (id)
 );
 
--- 5. Таблица Flights (Рейсы)
 CREATE TABLE Flights
 (
     id             SERIAL PRIMARY KEY,
@@ -66,7 +71,6 @@ CREATE TABLE Flights
         ON DELETE CASCADE
 );
 
--- 6. Таблица Passengers (Пассажиры)
 CREATE TABLE Passengers
 (
     id              SERIAL PRIMARY KEY,
@@ -79,7 +83,6 @@ CREATE TABLE Passengers
     CONSTRAINT phone_number_check CHECK (phone ~ E'^\\+?[0-9]{10,15}$')
 );
 
--- 7. Таблица Booking (Бронирование)
 CREATE TABLE Booking
 (
     id           SERIAL PRIMARY KEY,
@@ -91,7 +94,6 @@ CREATE TABLE Booking
         ON DELETE CASCADE
 );
 
--- 8. Таблица Tickets (Билеты)
 CREATE TABLE Tickets
 (
     id           SERIAL PRIMARY KEY,
@@ -112,7 +114,6 @@ CREATE TABLE Tickets
         ON DELETE SET NULL
 );
 
--- 9. Таблица Maintenance (Техническое обслуживание)
 CREATE TABLE Maintenance
 (
     id                    SERIAL PRIMARY KEY,
@@ -127,4 +128,17 @@ CREATE TABLE Maintenance
     CONSTRAINT fk_maintenance_employee FOREIGN KEY (performed_by)
         REFERENCES Employees (id)
         ON DELETE SET NULL
+);
+
+CREATE TABLE FlightCrew
+(
+    flight_id   INT NOT NULL,
+    employee_id INT NOT NULL,
+    PRIMARY KEY (flight_id, employee_id),
+    CONSTRAINT fk_flight FOREIGN KEY (flight_id)
+        REFERENCES Flights (id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_employee FOREIGN KEY (employee_id)
+        REFERENCES Employees (id)
+        ON DELETE CASCADE
 );
