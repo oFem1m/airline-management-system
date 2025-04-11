@@ -9,6 +9,7 @@ import (
 	"backend/internal/config"
 	"backend/internal/repository"
 	"backend/internal/router"
+	"github.com/gorilla/handlers"
 )
 
 func main() {
@@ -30,8 +31,14 @@ func main() {
 
 	r := router.NewRouter(db)
 
+	corsHandler := handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
+	)(r)
+
 	srv := &http.Server{
-		Handler:      r,
+		Handler:      corsHandler,
 		Addr:         cfg.ServerAddress,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
