@@ -38,7 +38,9 @@
                             <p class="card-text">
                                 {{ maintenance.description }}<br />
                                 <strong>Следующее обслуживание:</strong>
-                                {{ maintenance.next_maintenance_date }}
+                                {{ maintenance.next_maintenance_date }}<br />
+                                <strong>Выполнил:</strong>
+                                {{ getEmployeeName(maintenance.performed_by) }}
                             </p>
                             <button
                                 class="btn btn-danger btn-sm float-end"
@@ -56,6 +58,7 @@
             ref="maintenanceModal"
             :initialMaintenance="selectedMaintenance"
             :aircraftId="aircraftId"
+            :employees="employees"
             @createMaintenance="handleCreateMaintenance"
             @updateMaintenance="handleUpdateMaintenance"
         />
@@ -68,11 +71,13 @@ import { useRoute } from 'vue-router'
 import Header from '@/components/Header.vue'
 import aircraftApi from '@/API/aircraftApi'
 import maintenanceApi from '@/API/maintenanceApi'
+import employeeApi from '@/API/employeeApi'
 import MaintenanceModal from '@/components/MaintenanceModal.vue'
 
 export default {
     name: 'AdminAircraft',
     components: {
+      // eslint-disable-next-line vue/no-reserved-component-names
         Header,
         MaintenanceModal,
     },
@@ -82,6 +87,7 @@ export default {
 
         const aircraft = ref(null)
         const maintenances = ref([])
+        const employees = ref([])
 
         const selectedMaintenance = ref(null)
 
@@ -104,6 +110,17 @@ export default {
                 })
                 .catch((error) => {
                     console.error('Ошибка при получении обслуживаний', error)
+                })
+        }
+
+        const fetchEmployees = () => {
+            employeeApi
+                .getEmployees()
+                .then((response) => {
+                    employees.value = response.data
+                })
+                .catch((error) => {
+                    console.error('Ошибка получения сотрудников', error)
                 })
         }
 
@@ -150,11 +167,17 @@ export default {
                 })
         }
 
+        const getEmployeeName = (employeeId) => {
+            const emp = employees.value.find((e) => e.id === employeeId)
+            return emp ? `${emp.first_name} ${emp.last_name} (ID: ${emp.id})` : 'Не задан'
+        }
+
         const maintenanceModal = ref(null)
 
         onMounted(() => {
             fetchAircraft()
             fetchMaintenances()
+            fetchEmployees()
         })
 
         return {
@@ -168,6 +191,8 @@ export default {
             selectedMaintenance,
             maintenanceModal,
             aircraftId,
+            employees,
+            getEmployeeName,
         }
     },
 }

@@ -39,15 +39,19 @@
                         </div>
                         <div class="mb-3">
                             <label for="performed_by" class="form-label">
-                                ID сотрудника (performed_by)
+                                Сотрудник, выполнивший обслуживание
                             </label>
-                            <input
-                                type="number"
+                            <select
                                 id="performed_by"
-                                v-model="maintenance.performed_by"
+                                v-model.number="maintenance.performed_by"
                                 class="form-control"
                                 required
-                            />
+                            >
+                                <option disabled value="">Выберите сотрудника</option>
+                                <option v-for="emp in employees" :key="emp.id" :value="emp.id">
+                                    {{ emp.first_name }} {{ emp.last_name }} (ID: {{ emp.id }})
+                                </option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="next_maintenance_date" class="form-label">
@@ -71,7 +75,7 @@
 </template>
 
 <script>
-import { ref, computed, defineComponent, watch } from 'vue'
+import { ref, computed, defineComponent, watch, toRefs } from 'vue'
 import { Modal } from 'bootstrap'
 
 function fromISO(isoStr) {
@@ -102,9 +106,15 @@ export default defineComponent({
             type: Number,
             required: true,
         },
+        employees: {
+            type: Array,
+            default: () => [],
+        },
     },
     emits: ['createMaintenance', 'updateMaintenance'],
     setup(props, { emit }) {
+        const { employees } = toRefs(props)
+
         const maintenance = ref({
             id: null,
             aircraft_id: null,
@@ -186,6 +196,8 @@ export default defineComponent({
             open,
             close,
             submitForm,
+          // eslint-disable-next-line vue/no-dupe-keys
+            employees,
         }
     },
 })
