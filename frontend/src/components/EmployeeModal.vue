@@ -36,14 +36,18 @@
                             />
                         </div>
                         <div class="mb-3">
-                            <label for="role_id" class="form-label">ID роли</label>
-                            <input
-                                type="number"
+                            <label for="role_id" class="form-label">Должность</label>
+                            <select
                                 id="role_id"
-                                v-model="employee.role_id"
+                                v-model.number="employee.role_id"
                                 class="form-control"
                                 required
-                            />
+                            >
+                                <option disabled value="">Выберите должность</option>
+                                <option v-for="role in roles" :key="role.id" :value="role.id">
+                                    {{ role.name }}
+                                </option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="hire_date" class="form-label">Дата найма</label>
@@ -123,6 +127,10 @@ export default defineComponent({
         initialEmployee: {
             type: Object,
             default: null,
+        },
+        roles: {
+            type: Array,
+            default: () => [],
         },
     },
     emits: ['createEmployee', 'updateEmployee'],

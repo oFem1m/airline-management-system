@@ -4,7 +4,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        {{ isEditMode ? 'Редактировать роль' : 'Добавить роль' }}
+                        {{ isEditMode ? 'Редактировать должность' : 'Добавить должность' }}
                     </h5>
                     <button
                         type="button"

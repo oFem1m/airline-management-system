@@ -25,7 +25,7 @@
                                     Телефон: {{ emp.phone }}<br />
                                     Дата найма: {{ formatDate(emp.hire_date) }}<br />
                                     Зарплата: {{ emp.salary }}<br />
-                                    Роль (ID): {{ emp.role_id }}
+                                    Должность: {{ getRoleName(emp.role_id) }}
                                 </p>
                                 <button
                                     class="btn btn-danger btn-sm float-end"
@@ -43,22 +43,22 @@
 
             <div class="mt-4">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2>Роли</h2>
+                    <h2>Должности</h2>
                     <button class="btn btn-primary" @click="openCreateRoleModal">
-                        Добавить роль
+                        Добавить должность
                     </button>
                 </div>
                 <div class="row mt-3">
-                    <div v-for="role in roles" :key="role.id" class="col-md-4 mb-3">
-                        <div class="card" style="cursor: pointer" @click="openEditRoleModal(role)">
+                    <div v-for="rl in roles" :key="rl.id" class="col-md-4 mb-3">
+                        <div class="card" style="cursor: pointer" @click="openEditRoleModal(rl)">
                             <div class="card-body">
-                                <h5 class="card-title">{{ role.name }}</h5>
+                                <h5 class="card-title">{{ rl.name }}</h5>
                                 <p class="card-text">
-                                    {{ role.description }}
+                                    {{ rl.description }}
                                 </p>
                                 <button
                                     class="btn btn-danger btn-sm float-end"
-                                    @click.stop="deleteRole(role.id)"
+                                    @click.stop="deleteRole(rl.id)"
                                 >
                                     ×
                                 </button>
@@ -72,6 +72,7 @@
         <EmployeeModal
             ref="employeeModal"
             :initialEmployee="selectedEmployee"
+            :roles="roles"
             @createEmployee="handleCreateEmployee"
             @updateEmployee="handleUpdateEmployee"
         />
@@ -223,6 +224,11 @@ export default {
             return date.toLocaleString()
         }
 
+        const getRoleName = (roleId) => {
+            const role = roles.value.find((r) => r.id === roleId)
+            return role ? role.name : 'Не задана'
+        }
+
         onMounted(() => {
             fetchEmployees()
             fetchRoles()
@@ -246,6 +252,7 @@ export default {
             employeeModal,
             roleModal,
             formatDate,
+            getRoleName,
         }
     },
 }
