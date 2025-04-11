@@ -21,14 +21,14 @@ func NewEmployeeRepository(db *sql.DB) *EmployeeRepository {
 // Create добавляет нового сотрудника в БД.
 func (r *EmployeeRepository) Create(emp *models.Employee) error {
 	query := `
-		INSERT INTO Employees (first_name, last_name, position, hire_date, salary, email, phone)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
-		RETURNING id
-	`
+        INSERT INTO Employees (first_name, last_name, role_id, hire_date, salary, email, phone)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING id
+    `
 	err := r.db.QueryRow(query,
 		emp.FirstName,
 		emp.LastName,
-		emp.Position,
+		emp.RoleID,
 		emp.HireDate,
 		emp.Salary,
 		emp.Email,
@@ -57,9 +57,9 @@ func (r *EmployeeRepository) Delete(id int) error {
 // GetAll возвращает список всех сотрудников.
 func (r *EmployeeRepository) GetAll() ([]models.Employee, error) {
 	query := `
-		SELECT id, first_name, last_name, position, hire_date, salary, email, phone
-		FROM Employees
-	`
+        SELECT id, first_name, last_name, role_id, hire_date, salary, email, phone
+        FROM Employees
+    `
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("не удалось получить список сотрудников: %w", err)
@@ -74,7 +74,7 @@ func (r *EmployeeRepository) GetAll() ([]models.Employee, error) {
 			&e.ID,
 			&e.FirstName,
 			&e.LastName,
-			&e.Position,
+			&e.RoleID,
 			&hireDate,
 			&e.Salary,
 			&e.Email,
@@ -95,17 +95,17 @@ func (r *EmployeeRepository) GetAll() ([]models.Employee, error) {
 // GetByID возвращает данные одного сотрудника по его ID.
 func (r *EmployeeRepository) GetByID(id int) (*models.Employee, error) {
 	query := `
-		SELECT id, first_name, last_name, position, hire_date, salary, email, phone
-		FROM Employees
-		WHERE id = $1
-	`
+        SELECT id, first_name, last_name, role_id, hire_date, salary, email, phone
+        FROM Employees
+        WHERE id = $1
+    `
 	var e models.Employee
 	var hireDate time.Time
 	err := r.db.QueryRow(query, id).Scan(
 		&e.ID,
 		&e.FirstName,
 		&e.LastName,
-		&e.Position,
+		&e.RoleID,
 		&hireDate,
 		&e.Salary,
 		&e.Email,
@@ -124,20 +124,20 @@ func (r *EmployeeRepository) GetByID(id int) (*models.Employee, error) {
 // Update обновляет данные сотрудника.
 func (r *EmployeeRepository) Update(emp *models.Employee) error {
 	query := `
-		UPDATE Employees
-		SET first_name = $1,
-		    last_name = $2,
-		    position = $3,
-		    hire_date = $4,
-		    salary = $5,
-		    email = $6,
-		    phone = $7
-		WHERE id = $8
-	`
+        UPDATE Employees
+        SET first_name = $1,
+            last_name = $2,
+            role_id = $3,
+            hire_date = $4,
+            salary = $5,
+            email = $6,
+            phone = $7
+        WHERE id = $8
+    `
 	result, err := r.db.Exec(query,
 		emp.FirstName,
 		emp.LastName,
-		emp.Position,
+		emp.RoleID,
 		emp.HireDate,
 		emp.Salary,
 		emp.Email,

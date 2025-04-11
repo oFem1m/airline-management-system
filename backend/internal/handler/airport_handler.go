@@ -42,6 +42,38 @@ func (h *AirportHandler) CreateAirport(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// UpdateAirport обрабатывает PUT-запрос для обновления информации об аэропорте по его ID.
+func (h *AirportHandler) UpdateAirport(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	if idStr == "" {
+		http.Error(w, "Не указан ID аэропорта", http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Некорректный ID аэропорта", http.StatusBadRequest)
+		return
+	}
+
+	var airport models.Airport
+	if err := json.NewDecoder(r.Body).Decode(&airport); err != nil {
+		http.Error(w, "Неверный формат запроса", http.StatusBadRequest)
+		return
+	}
+
+	airport.ID = id
+
+	if err := h.repo.Update(&airport); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(airport)
+}
+
 // DeleteAirport обрабатывает POST-запрос на удаление аэропорта по ID
 func (h *AirportHandler) DeleteAirport(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)

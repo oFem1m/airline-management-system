@@ -1,4 +1,5 @@
 # Система управления авиакомпанией
+![Модель](./database/model.png)
 # API Документация
 
 ---
@@ -51,7 +52,7 @@ curl -X POST http://localhost:8080/api/v1/employee \
   -d '{
     "first_name": "John",
     "last_name": "Doe",
-    "position": "Pilot",
+    "role_id": 1,
     "hire_date": "2023-03-10T00:00:00Z",
     "salary": 100000,
     "email": "john.doe@example.com",
@@ -62,17 +63,17 @@ curl -X POST http://localhost:8080/api/v1/employee \
 ```bash
 curl -X POST http://localhost:8080/api/v1/employee ^
   -H "Content-Type: application/json" ^
-  -d "{\"first_name\": \"John\", \"last_name\": \"Doe\", \"position\": \"Pilot\", \"hire_date\": \"2023-03-10T00:00:00Z\", \"salary\": 100000, \"email\": \"john.doe@example.com\", \"phone\": \"+12345678901\"}"
+  -d "{\"first_name\": \"John\", \"last_name\": \"Doe\", \"role_id\": 1, \"hire_date\": \"2023-03-10T00:00:00Z\", \"salary\": 100000, \"email\": \"john.doe@example.com\", \"phone\": \"+12345678901\"}"
 ```
 
 ### Получение списка сотрудников
 ```bash
-curl http://localhost:8080/api/v1/employees
+curl -X GET http://localhost:8080/api/v1/employees
 ```
 
 ### Получение информации о конкретном сотруднике
 ```bash
-curl http://localhost:8080/api/v1/employee/1
+curl -X GET http://localhost:8080/api/v1/employee/1
 ```
 
 ### Обновление данных сотрудника
@@ -83,7 +84,7 @@ curl -X PUT http://localhost:8080/api/v1/employee/1 \
   -d '{
     "first_name": "John",
     "last_name": "Doe",
-    "position": "Senior Pilot",
+    "role_id": 2,
     "hire_date": "2022-12-01T00:00:00Z",
     "salary": 120000,
     "email": "john.doe@example.com",
@@ -94,12 +95,65 @@ curl -X PUT http://localhost:8080/api/v1/employee/1 \
 ```bash
 curl -X PUT http://localhost:8080/api/v1/employee/1 ^
   -H "Content-Type: application/json" ^
-  -d "{\"first_name\": \"John\", \"last_name\": \"Doe\", \"position\": \"Senior Pilot\", \"hire_date\": \"2022-12-01T00:00:00Z\", \"salary\": 120000, \"email\": \"john.doe@example.com\", \"phone\": \"+12345678901\"}"
+  -d "{\"first_name\": \"John\", \"last_name\": \"Doe\", \"role_id\": 2, \"hire_date\": \"2022-12-01T00:00:00Z\", \"salary\": 120000, \"email\": \"john.doe@example.com\", \"phone\": \"+12345678901\"}"
 ```
 
 ### Удаление сотрудника
 ```bash
 curl -X DELETE http://localhost:8080/api/v1/employee/1
+```
+
+---
+
+## Роли
+
+### Добавление новой роли
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/role \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "КВС",
+    "description": "Капитан воздушного судна"
+  }'
+```
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/role ^
+  -H "Content-Type: application/json" ^
+  -d "{\"name\": \"КВС\", \"description\": \"Капитан воздушного судна\"}"
+```
+
+### Обновление роли по ID
+**Ubuntu/Linux:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/role/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "КВС",
+    "description": "Обновленное описание роли"
+  }'
+```
+**Windows:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/role/1 ^
+  -H "Content-Type: application/json" ^
+  -d "{\"name\": \"КВС\", \"description\": \"Обновленное описание роли\"}"
+```
+
+### Получение списка всех ролей
+```bash
+curl -X GET http://localhost:8080/api/v1/roles
+```
+
+### Получение роли по ID
+```bash
+curl -X GET http://localhost:8080/api/v1/role/1
+```
+
+### Удаление роли
+```bash
+curl -X DELETE http://localhost:8080/api/v1/role/1
 ```
 
 ---
@@ -124,6 +178,26 @@ curl -X POST http://localhost:8080/api/v1/airport \
 curl -X POST http://localhost:8080/api/v1/airport ^ 
   -H "Content-Type: application/json" ^ 
   -d "{\"name\": \"Sheremetyevo International Airport\", \"code\": \"SVO\", \"city\": \"Moscow\", \"country\": \"Russia\", \"timezone\": \"Europe/Moscow\"}"
+```
+
+### Обновление информации об аэропорте
+**Ubuntu/Linux:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/airport/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Airport Name",
+    "code": "NEW",
+    "city": "Updated City",
+    "country": "Updated Country",
+    "timezone": "Europe/Updated"
+  }'
+```
+**Windows:**
+```bash
+curl -X PUT http://localhost:8080/api/v1/airport/1 ^ 
+  -H "Content-Type: application/json" ^ 
+  -d "{\"name\": \"Updated Airport Name\", \"code\": \"NEW\", \"city\": \"Updated City\", \"country\": \"Updated Country\", \"timezone\": \"Europe/Updated\"}"
 ```
 
 ### Получение информации о конкретном аэропорте
@@ -314,7 +388,6 @@ curl -X GET http://localhost:8080/api/v1/passenger/1
 ```
 
 ### Обновление данных пассажира
-
 **Ubuntu/Linux:**
 ```bash
 curl -X PUT http://localhost:8080/api/v1/passenger/1 \
@@ -543,7 +616,39 @@ curl -X GET http://localhost:8080/api/v1/maintenances/employee/2
 curl -X DELETE http://localhost:8080/api/v1/maintenance/1
 ```
 
+---
 
+## Экипажи (FlightCrew)
 
+### Назначение сотрудника на рейс
+**Ubuntu/Linux:**
+```bash
+curl -X POST http://localhost:8080/api/v1/flightcrew \
+  -H "Content-Type: application/json" \
+  -d '{
+    "flight_id": 1,
+    "employee_id": 2
+  }'
+```
+**Windows:**
+```bash
+curl -X POST http://localhost:8080/api/v1/flightcrew ^
+  -H "Content-Type: application/json" ^
+  -d "{\"flight_id\": 1, \"employee_id\": 2}"
+```
 
+### Удаление сотрудника с рейса
+_В данном случае удаление производится по query-параметрам `flight_id` и `employee_id`:_
+```bash
+curl -X DELETE "http://localhost:8080/api/v1/flightcrew?flight_id=1&employee_id=2"
+```
 
+### Получение списка сотрудников на рейсе по ID рейса
+```bash
+curl -X GET http://localhost:8080/api/v1/flightcrew/flight/1
+```
+
+### Получение списка рейсов, на которых закреплён сотрудник (по ID сотрудника)
+```bash
+curl -X GET http://localhost:8080/api/v1/flightcrew/employee/2
+```
