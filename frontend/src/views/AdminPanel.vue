@@ -8,7 +8,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h2>Самолеты</h2>
                     <button class="btn btn-primary" @click="openAircraftModal">
-                        Создать самолет
+                        Добавить самолет
                     </button>
                 </div>
                 <div class="mt-2">
@@ -49,7 +49,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h2>Аэропорты</h2>
                     <button class="btn btn-primary" @click="openCreateAirportModal">
-                        Создать аэропорт
+                        Добавить аэропорт
                     </button>
                 </div>
                 <div class="mt-2">

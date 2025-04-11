@@ -4,7 +4,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        {{ isEditMode ? 'Редактировать аэропорт' : 'Создать аэропорт' }}
+                        {{ isEditMode ? 'Редактировать аэропорт' : 'Добавить аэропорт' }}
                     </h5>
                     <button
                         type="button"
@@ -66,7 +66,7 @@
                             />
                         </div>
                         <button type="submit" class="btn btn-primary">
-                            {{ isEditMode ? 'Изменить' : 'Создать' }}
+                            {{ isEditMode ? 'Изменить' : 'Добавить' }}
                         </button>
                     </form>
                 </div>

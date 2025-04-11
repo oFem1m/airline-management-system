@@ -16,9 +16,9 @@
                 <div class="modal-body">
                     <form @submit.prevent="submitForm">
                         <div class="mb-3">
-                            <label for="maintenance_date" class="form-label"
-                                >Дата обслуживания</label
-                            >
+                            <label for="maintenance_date" class="form-label">
+                                Дата обслуживания
+                            </label>
                             <input
                                 type="datetime-local"
                                 id="maintenance_date"
@@ -38,9 +38,9 @@
                             ></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="performed_by" class="form-label"
-                                >ID сотрудника (performed_by)</label
-                            >
+                            <label for="performed_by" class="form-label">
+                                ID сотрудника (performed_by)
+                            </label>
                             <input
                                 type="number"
                                 id="performed_by"
@@ -50,9 +50,9 @@
                             />
                         </div>
                         <div class="mb-3">
-                            <label for="next_maintenance_date" class="form-label"
-                                >Дата следующего обслуживания</label
-                            >
+                            <label for="next_maintenance_date" class="form-label">
+                                Дата следующего обслуживания
+                            </label>
                             <input
                                 type="datetime-local"
                                 id="next_maintenance_date"
@@ -61,7 +61,7 @@
                             />
                         </div>
                         <button type="submit" class="btn btn-primary">
-                            {{ isEditMode ? 'Изменить' : 'Создать' }}
+                            {{ isEditMode ? 'Изменить' : 'Добавить' }}
                         </button>
                     </form>
                 </div>
@@ -73,6 +73,23 @@
 <script>
 import { ref, computed, defineComponent, watch } from 'vue'
 import { Modal } from 'bootstrap'
+
+function fromISO(isoStr) {
+    if (!isoStr) return ''
+    const date = new Date(isoStr)
+    const year = date.getFullYear().toString().padStart(4, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const day = date.getDate().toString().padStart(2, '0')
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
+function toISO(localDateTimeStr) {
+    if (!localDateTimeStr) return null
+    const date = new Date(localDateTimeStr)
+    return date.toISOString()
+}
 
 export default defineComponent({
     name: 'MaintenanceModal',
@@ -114,10 +131,11 @@ export default defineComponent({
             () => props.initialMaintenance,
             (newVal) => {
                 if (newVal) {
-                    // Клонируем объект (и подставим текущий aircraftId, если нужно)
                     maintenance.value = {
                         ...newVal,
                         aircraft_id: props.aircraftId,
+                        maintenance_date: fromISO(newVal.maintenance_date),
+                        next_maintenance_date: fromISO(newVal.next_maintenance_date),
                     }
                 } else {
                     resetForm()
@@ -140,12 +158,6 @@ export default defineComponent({
             if (modalInstance) {
                 modalInstance.hide()
             }
-        }
-
-        const toISO = (localDateTimeStr) => {
-            if (!localDateTimeStr) return null
-            const date = new Date(localDateTimeStr)
-            return date.toISOString()
         }
 
         const submitForm = () => {

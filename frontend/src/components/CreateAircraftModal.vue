@@ -3,7 +3,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Создать самолет</h5>
+                    <h5 class="modal-title">Добавить самолет</h5>
                     <button
                         type="button"
                         class="btn-close"
@@ -53,7 +53,7 @@
                                 required
                             />
                         </div>
-                        <button type="submit" class="btn btn-primary">Создать</button>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
                     </form>
                 </div>
             </div>
