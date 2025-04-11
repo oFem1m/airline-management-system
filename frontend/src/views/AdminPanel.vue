@@ -18,7 +18,11 @@
                 <div v-if="showAircrafts" class="mt-3">
                     <div class="row">
                         <div v-for="aircraft in aircrafts" :key="aircraft.id" class="col-md-4 mb-3">
-                            <div class="card">
+                            <div
+                                class="card"
+                                style="cursor: pointer"
+                                @click="goToAircraft(aircraft.id)"
+                            >
                                 <div class="card-body">
                                     <h5 class="card-title">{{ aircraft.tail_number }}</h5>
                                     <p class="card-text">
@@ -28,7 +32,7 @@
                                     </p>
                                     <button
                                         class="btn btn-danger btn-sm float-end"
-                                        @click="deleteAircraft(aircraft.id)"
+                                        @click.stop="deleteAircraft(aircraft.id)"
                                     >
                                         ×
                                     </button>
@@ -99,6 +103,7 @@ import CreateAircraftModal from '@/components/CreateAircraftModal.vue'
 import AirportModal from '@/components/AirportModal.vue'
 import aircraftApi from '@/API/aircraftApi'
 import airportApi from '@/API/airportApi'
+import { useRouter } from 'vue-router'
 
 export default {
     name: 'AdminPanel',
@@ -108,8 +113,13 @@ export default {
         AirportModal,
     },
     setup() {
+        const router = useRouter()
         const showAircrafts = ref(false)
         const aircrafts = ref([])
+
+        const goToAircraft = (id) => {
+            router.push(`/admin/aircraft/${id}`)
+        }
 
         const fetchAircrafts = () => {
             aircraftApi
@@ -232,11 +242,10 @@ export default {
             handleUpdateAirport,
             airportModal,
             selectedAirport,
+            goToAircraft,
         }
     },
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
