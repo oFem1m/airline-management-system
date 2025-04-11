@@ -7,7 +7,9 @@
             <div class="mt-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2>Самолеты</h2>
-                    <button class="btn btn-primary" @click="openModal">Создать самолет</button>
+                    <button class="btn btn-primary" @click="openAircraftModal">
+                        Создать самолет
+                    </button>
                 </div>
                 <div class="mt-2">
                     <input type="checkbox" v-model="showAircrafts" id="toggleAircrafts" />
@@ -37,7 +39,55 @@
                 </div>
             </div>
 
+            <hr class="my-4" />
+
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>Аэропорты</h2>
+                    <button class="btn btn-primary" @click="openCreateAirportModal">
+                        Создать аэропорт
+                    </button>
+                </div>
+                <div class="mt-2">
+                    <input type="checkbox" v-model="showAirports" id="toggleAirports" />
+                    <label for="toggleAirports" class="ms-2">Показать список аэропортов</label>
+                </div>
+                <div v-if="showAirports" class="mt-3">
+                    <div class="row">
+                        <div v-for="airport in airports" :key="airport.id" class="col-md-4 mb-3">
+                            <div
+                                class="card"
+                                @click="openEditAirportModal(airport)"
+                                style="cursor: pointer"
+                            >
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ airport.name }}</h5>
+                                    <p class="card-text">
+                                        Код: {{ airport.code }}<br />
+                                        Город: {{ airport.city }}<br />
+                                        Страна: {{ airport.country }}<br />
+                                        Часовой пояс: {{ airport.timezone }}
+                                    </p>
+                                    <button
+                                        class="btn btn-danger btn-sm float-end"
+                                        @click.stop="deleteAirport(airport.id)"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <CreateAircraftModal ref="createAircraftModal" @createAircraft="handleCreateAircraft" />
+            <AirportModal
+                ref="airportModal"
+                :initialAirport="selectedAirport"
+                @createAirport="handleCreateAirport"
+                @updateAirport="handleUpdateAirport"
+            />
         </div>
     </div>
 </template>
@@ -46,13 +96,16 @@
 import { ref, onMounted } from 'vue'
 import Header from '@/components/Header.vue'
 import CreateAircraftModal from '@/components/CreateAircraftModal.vue'
+import AirportModal from '@/components/AirportModal.vue'
 import aircraftApi from '@/API/aircraftApi'
+import airportApi from '@/API/airportApi'
 
 export default {
     name: 'AdminPanel',
     components: {
         Header,
         CreateAircraftModal,
+        AirportModal,
     },
     setup() {
         const showAircrafts = ref(false)
@@ -92,22 +145,93 @@ export default {
         }
 
         const createAircraftModal = ref(null)
-
-        const openModal = () => {
+        const openAircraftModal = () => {
             createAircraftModal.value.open()
+        }
+
+        const showAirports = ref(false)
+        const airports = ref([])
+        const selectedAirport = ref(null)
+
+        const fetchAirports = () => {
+            airportApi
+                .getAirports()
+                .then((response) => {
+                    airports.value = response.data
+                })
+                .catch((error) => {
+                    console.error('Ошибка получения аэропортов', error)
+                })
+        }
+
+        const handleCreateAirport = (newAirportData) => {
+            airportApi
+                .createAirport(newAirportData)
+                .then(() => {
+                    fetchAirports()
+                })
+                .catch((error) => {
+                    console.error('Ошибка создания аэропорта', error)
+                })
+        }
+
+        const handleUpdateAirport = (airportData) => {
+            airportApi
+                .updateAirport(airportData.id, airportData)
+                .then(() => {
+                    fetchAirports()
+                })
+                .catch((error) => {
+                    console.error('Ошибка обновления аэропорта', error)
+                })
+        }
+
+        const deleteAirport = (id) => {
+            airportApi
+                .deleteAirport(id)
+                .then(() => {
+                    fetchAirports()
+                })
+                .catch((error) => {
+                    console.error('Ошибка удаления аэропорта', error)
+                })
+        }
+
+        const airportModal = ref(null)
+
+        const openCreateAirportModal = () => {
+            selectedAirport.value = null
+            airportModal.value.open()
+        }
+
+        const openEditAirportModal = (airport) => {
+            selectedAirport.value = { ...airport }
+            airportModal.value.open()
         }
 
         onMounted(() => {
             fetchAircrafts()
+            fetchAirports()
         })
 
         return {
+            // Самолеты
             showAircrafts,
             aircrafts,
-            openModal,
+            openAircraftModal,
             deleteAircraft,
             handleCreateAircraft,
             createAircraftModal,
+            // Аэропорты
+            showAirports,
+            airports,
+            openCreateAirportModal,
+            openEditAirportModal,
+            deleteAirport,
+            handleCreateAirport,
+            handleUpdateAirport,
+            airportModal,
+            selectedAirport,
         }
     },
 }
