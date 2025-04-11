@@ -85,6 +85,17 @@
                 </div>
             </div>
 
+            <hr class="my-4" />
+
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>Персонал</h2>
+                  <router-link to="/admin/staff" class="btn btn-secondary">
+                    Управление персоналом
+                  </router-link>
+                </div>
+            </div>
+
             <CreateAircraftModal ref="createAircraftModal" @createAircraft="handleCreateAircraft" />
             <AirportModal
                 ref="airportModal"
