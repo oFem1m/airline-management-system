@@ -4,7 +4,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        {{isEditMode ? 'Редактирование рейса' : 'Создание рейса'}}
+                        {{ isEditMode ? 'Редактирование рейса' : 'Создание рейса' }}
                     </h5>
                     <button
                         type="button"
@@ -89,7 +89,11 @@ export default defineComponent({
     props: {
         initialFlight: {
             type: Object,
-            default: null
+            default: () => ({}), // Default to an empty object
+        },
+        routeId: {
+            type: Number,
+            required: true, // Make sure routeId is passed
         },
     },
     emits: ['createFlight', 'updateFlight'],
@@ -122,11 +126,12 @@ export default defineComponent({
                 ...flight.value,
                 departure_time: toISO(flight.value.departure_time),
                 arrival_time: toISO(flight.value.arrival_time),
+                route_id: props.routeId,
             }
             if (isEditMode.value) {
-                emit('updateFlight', { preparedFlight })
+                emit('updateFlight', { ...preparedFlight })
             } else {
-                emit('createFlight', { preparedFlight })
+                emit('createFlight', { ...preparedFlight })
             }
             resetForm()
             close()

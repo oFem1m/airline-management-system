@@ -60,6 +60,7 @@
             <FlightModal
                 ref="flightModal"
                 :initialFlight="{}"
+                :routeId="routeId"
                 @createFlight="handleCreateFlight"
                 @updateFlight="handleUpdateFlight"
             />
@@ -175,6 +176,7 @@ export default defineComponent({
             routeData,
             flights,
             airports,
+            routeId,
             getAirportLabel,
             getTailNumber,
             openEditRouteModal,
