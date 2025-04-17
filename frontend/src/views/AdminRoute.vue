@@ -23,7 +23,11 @@
 
             <hr class="my-4" />
 
-            <h2>Рейсы для этого маршрута</h2>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Рейсы для этого маршрута</h2>
+                <button class="btn btn-primary" @click="openCreateFlightModal">Создать рейс</button>
+            </div>
+
             <div v-if="flights.length" class="row mt-3">
                 <div v-for="flight in flights" :key="flight.id" class="col-md-4 mb-3">
                     <div class="card">
@@ -52,6 +56,13 @@
                 :initialRoute="routeData"
                 @updateRoute="handleUpdateRoute"
             />
+
+            <FlightModal
+                ref="flightModal"
+                :initialFlight="{}"
+                @createFlight="handleCreateFlight"
+                @updateFlight="handleUpdateFlight"
+            />
         </div>
     </div>
 </template>
@@ -61,6 +72,7 @@ import { ref, onMounted, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from '@/components/Header.vue'
 import RouteModal from '@/components/RouteModal.vue'
+import FlightModal from '@/components/FlightModal.vue'
 import routeApi from '@/API/routeApi'
 import flightApi from '@/API/flightApi'
 import airportApi from '@/API/airportApi'
@@ -68,7 +80,11 @@ import aircraftApi from '@/API/aircraftApi'
 
 export default defineComponent({
     name: 'AdminRoute',
-    components: { Header, RouteModal },
+    components: {
+        Header,
+        RouteModal,
+        FlightModal,
+    },
     setup() {
         const route = useRoute()
         const routeId = parseInt(route.params.id, 10)
@@ -131,6 +147,23 @@ export default defineComponent({
                 .then(fetchFlights)
                 .catch((err) => console.error('Ошибка удаления рейса', err))
 
+        const flightModal = ref(null)
+        const openCreateFlightModal = () => {
+            flightModal.value.open()
+        }
+
+        const handleCreateFlight = (newFlight) =>
+            flightApi
+                .createFlight(newFlight)
+                .then(() => fetchFlights())
+                .catch((err) => console.error('Ошибка создания рейса', err))
+
+        const handleUpdateFlight = (updatedFlight) =>
+            flightApi
+                .updateFlight(updatedFlight.id, updatedFlight)
+                .then(() => fetchFlights())
+                .catch((err) => console.error('Ошибка обновления рейса', err))
+
         onMounted(async () => {
             await fetchAirports()
             await fetchAircrafts()
@@ -148,6 +181,10 @@ export default defineComponent({
             handleUpdateRoute,
             deleteFlight,
             routeModal,
+            openCreateFlightModal,
+            flightModal,
+            handleCreateFlight,
+            handleUpdateFlight,
         }
     },
 })
