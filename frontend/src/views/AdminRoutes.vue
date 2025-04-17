@@ -12,15 +12,15 @@
                 </div>
                 <div class="row mt-3">
                     <div v-for="route in routes" :key="route.id" class="col-md-4 mb-3">
-                        <div class="card" style="cursor: pointer">
+                        <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    Маршрут {{ route.departure_airport_id }} -
-                                    {{ route.arrival_airport_id }}
+                                    Маршрут {{ getAirportLabel(route.departure_airport_id) }} —
+                                    {{ getAirportLabel(route.arrival_airport_id) }}
                                 </h5>
                                 <p class="card-text">
-                                    Расстояние: {{ route.distance }} км <br />
-                                    Время в пути: {{ route.duration_minutes }} минут
+                                    Расстояние: {{ route.distance }} км<br />
+                                    Время: {{ route.duration_minutes }} мин
                                 </p>
                                 <button
                                     class="btn btn-danger btn-sm float-end"
@@ -40,69 +40,71 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineComponent } from 'vue'
 import Header from '@/components/Header.vue'
 import CreateRouteModal from '@/components/CreateRouteModal.vue'
 import routeApi from '@/API/routeApi'
+import airportApi from '@/API/airportApi'
 
-export default {
+export default defineComponent({
     name: 'AdminRoutes',
-    components: {
-        Header,
-        CreateRouteModal,
-    },
+    components: { Header, CreateRouteModal },
     setup() {
         const routes = ref([])
+        const airports = ref([])
+
         const fetchRoutes = () => {
             routeApi
                 .getRoutes()
-                .then((response) => {
-                    routes.value = response.data
-                })
-                .catch((error) => {
-                    console.error('Ошибка получения маршрутов', error)
-                })
+                .then((res) => (routes.value = res.data))
+                .catch((err) => console.error('Ошибка получения маршрутов', err))
+        }
+        const fetchAirports = () => {
+            airportApi
+                .getAirports()
+                .then((res) => (airports.value = res.data))
+                .catch((err) => console.error('Ошибка получения аэропортов', err))
         }
 
         const deleteRoute = (id) => {
             routeApi
                 .deleteRoute(id)
-                .then(() => {
-                    fetchRoutes()
-                })
-                .catch((error) => {
-                    console.error('Ошибка удаления маршрута', error)
-                })
+                .then(fetchRoutes)
+                .catch((err) => console.error('Ошибка удаления маршрута', err))
         }
 
-        const openCreateRouteModal = () => {
-            createRouteModal.value.open()
-        }
-
+        const openCreateRouteModal = () => createRouteModal.value.open()
         const handleCreateRoute = (newRoute) => {
             routeApi
                 .createRoute(newRoute)
                 .then(() => {
                     fetchRoutes()
                 })
-                .catch((error) => {
-                    console.error('Ошибка создания маршрута', error)
-                })
+                .catch((err) => console.error('Ошибка создания маршрута', err))
+        }
+
+        // Помощник для отображения города и кода
+        const getAirportLabel = (id) => {
+            const a = airports.value.find((x) => x.id === id)
+            return a ? `${a.city} (${a.code})` : id
         }
 
         const createRouteModal = ref(null)
 
         onMounted(() => {
+            fetchAirports()
             fetchRoutes()
         })
 
         return {
             routes,
-            openCreateRouteModal,
-            deleteRoute,
-            handleCreateRoute,
+            airports,
             createRouteModal,
+            openCreateRouteModal,
+            handleCreateRoute,
+            deleteRoute,
+            getAirportLabel,
         }
     },
-}
+})
 </script>
