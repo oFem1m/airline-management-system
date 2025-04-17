@@ -7,6 +7,9 @@ export default {
     createRoute(route) {
         return apiClient.post('/route', route)
     },
+    updateRoute(id, route) {
+        return apiClient.put(`/route/${id}`, route)
+    },
     deleteRoute(id) {
         return apiClient.delete(`/route/${id}`)
     },

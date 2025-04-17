@@ -12,7 +12,7 @@
                 </div>
                 <div class="row mt-3">
                     <div v-for="route in routes" :key="route.id" class="col-md-4 mb-3">
-                        <div class="card">
+                        <div class="card" @click="goToRoute(route.id)">
                             <div class="card-body">
                                 <h5 class="card-title">
                                     Маршрут {{ getAirportLabel(route.departure_airport_id) }} —
@@ -24,7 +24,7 @@
                                 </p>
                                 <button
                                     class="btn btn-danger btn-sm float-end"
-                                    @click="deleteRoute(route.id)"
+                                    @click.stop="deleteRoute(route.id)"
                                 >
                                     ×
                                 </button>
@@ -41,8 +41,9 @@
 
 <script>
 import { ref, onMounted, defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
 import Header from '@/components/Header.vue'
-import CreateRouteModal from '@/components/CreateRouteModal.vue'
+import CreateRouteModal from '@/components/RouteModal.vue'
 import routeApi from '@/API/routeApi'
 import airportApi from '@/API/airportApi'
 
@@ -52,6 +53,7 @@ export default defineComponent({
     setup() {
         const routes = ref([])
         const airports = ref([])
+        const router = useRouter()
 
         const fetchRoutes = () => {
             routeApi
@@ -83,10 +85,13 @@ export default defineComponent({
                 .catch((err) => console.error('Ошибка создания маршрута', err))
         }
 
-        // Помощник для отображения города и кода
         const getAirportLabel = (id) => {
             const a = airports.value.find((x) => x.id === id)
             return a ? `${a.city} (${a.code})` : id
+        }
+
+        const goToRoute = (routeId) => {
+            router.push(`/admin/route/${routeId}`)
         }
 
         const createRouteModal = ref(null)
@@ -104,6 +109,7 @@ export default defineComponent({
             handleCreateRoute,
             deleteRoute,
             getAirportLabel,
+            goToRoute,
         }
     },
 })

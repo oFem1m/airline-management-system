@@ -3,7 +3,9 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Создать новый маршрут</h5>
+                    <h5 class="modal-title">
+                        {{ isEditMode ? 'Редактировать маршрут' : 'Создать маршрут' }}
+                    </h5>
                     <button
                         type="button"
                         class="btn-close"
@@ -65,7 +67,9 @@
                                 required
                             />
                         </div>
-                        <button type="submit" class="btn btn-primary">Создать</button>
+                        <button type="submit" class="btn btn-primary">
+                            {{ isEditMode ? 'Сохранить изменения' : 'Создать' }}
+                        </button>
                     </form>
                 </div>
             </div>
@@ -74,23 +78,51 @@
 </template>
 
 <script>
-import { ref, onMounted, defineComponent } from 'vue'
+import { ref, computed, onMounted, watch, defineComponent } from 'vue'
 import { Modal } from 'bootstrap'
 import airportApi from '@/API/airportApi'
 
 export default defineComponent({
-    name: 'CreateRouteModal',
-    emits: ['createRoute'],
-    setup(_, { emit }) {
+    name: 'RouteModal',
+    props: {
+        initialRoute: {
+            type: Object,
+            default: null,
+        },
+    },
+    emits: ['createRoute', 'updateRoute'],
+    setup(props, { emit }) {
         const airports = ref([])
         const route = ref({
+            id: null,
             departure_airport_id: '',
             arrival_airport_id: '',
             distance: '',
             duration_minutes: '',
         })
 
-        // элемент модального окна
+        const isEditMode = computed(() => route.value.id !== null)
+
+        const resetForm = () => {
+            route.value = {
+                id: null,
+                departure_airport_id: '',
+                arrival_airport_id: '',
+                distance: '',
+                duration_minutes: '',
+            }
+        }
+
+        const submitForm = () => {
+            if (isEditMode.value) {
+                emit('updateRoute', { ...route.value })
+            } else {
+                emit('createRoute', { ...route.value })
+            }
+            resetForm()
+            close()
+        }
+
         const modalElement = ref(null)
         let modalInstance = null
 
@@ -102,33 +134,41 @@ export default defineComponent({
         }
         const close = () => modalInstance && modalInstance.hide()
 
-        const resetForm = () => {
-            route.value = {
-                departure_airport_id: '',
-                arrival_airport_id: '',
-                distance: '',
-                duration_minutes: '',
-            }
-        }
-
-        const submitForm = () => {
-            emit('createRoute', { ...route.value })
-            resetForm()
-            close()
-        }
-
         const fetchAirports = () => {
             airportApi
                 .getAirports()
-                .then((res) => (airports.value = res.data))
-                .catch((err) => console.error('Ошибка получения аэропортов', err))
+                .then((res) => {
+                    airports.value = res.data
+                })
+                .catch((err) => {
+                    console.error('Ошибка получения аэропортов', err)
+                })
         }
+
+        watch(
+            () => props.initialRoute,
+            (newVal) => {
+                if (newVal) {
+                    route.value = {
+                        id: newVal.id,
+                        departure_airport_id: newVal.departure_airport_id,
+                        arrival_airport_id: newVal.arrival_airport_id,
+                        distance: newVal.distance,
+                        duration_minutes: newVal.duration_minutes,
+                    }
+                } else {
+                    resetForm()
+                }
+            },
+            { immediate: true },
+        )
 
         onMounted(fetchAirports)
 
         return {
             airports,
             route,
+            isEditMode,
             modalElement,
             open,
             close,
@@ -137,3 +177,5 @@ export default defineComponent({
     },
 })
 </script>
+
+<style scoped></style>
