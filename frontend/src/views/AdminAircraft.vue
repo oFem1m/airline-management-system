@@ -3,6 +3,9 @@
         <Header />
 
         <div class="container mt-4">
+            <router-link to="/admin" class="back-link">
+                <span class="back-arrow">&#8592;</span> Назад
+            </router-link>
             <h1>Информация о самолёте</h1>
             <div v-if="aircraft" class="mt-3">
                 <p><strong>Бортовой номер:</strong> {{ aircraft.tail_number }}</p>
@@ -77,7 +80,7 @@ import MaintenanceModal from '@/components/MaintenanceModal.vue'
 export default {
     name: 'AdminAircraft',
     components: {
-      // eslint-disable-next-line vue/no-reserved-component-names
+        // eslint-disable-next-line vue/no-reserved-component-names
         Header,
         MaintenanceModal,
     },

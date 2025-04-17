@@ -2,6 +2,9 @@
     <div>
         <Header />
         <div class="container mt-4">
+            <router-link to="/admin/routes" class="back-link">
+                <span class="back-arrow">&#8592;</span> Назад
+            </router-link>
             <h1>Информация о маршруте</h1>
 
             <div v-if="routeData && airports.length" class="mt-3">
@@ -27,10 +30,18 @@
                         <div class="card-body">
                             <h5 class="card-title">Рейс {{ flight.flight_number }}</h5>
                             <p class="card-text">
+                                <strong>Бортовой номер:</strong>
+                                {{ getTailNumber(flight.aircraft_id) }}<br />
                                 Время вылета: {{ flight.departure_time }}<br />
                                 Время прибытия: {{ flight.arrival_time }}<br />
                                 Статус: {{ flight.status }}
                             </p>
+                            <button
+                                class="btn btn-danger btn-sm float-end"
+                                @click.stop="deleteFlight(flight.id)"
+                            >
+                                ×
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -53,13 +64,11 @@ import RouteModal from '@/components/RouteModal.vue'
 import routeApi from '@/API/routeApi'
 import flightApi from '@/API/flightApi'
 import airportApi from '@/API/airportApi'
+import aircraftApi from '@/API/aircraftApi'
 
 export default defineComponent({
     name: 'AdminRoute',
-    components: {
-        Header,
-        RouteModal,
-    },
+    components: { Header, RouteModal },
     setup() {
         const route = useRoute()
         const routeId = parseInt(route.params.id, 10)
@@ -67,49 +76,64 @@ export default defineComponent({
         const routeData = ref(null)
         const flights = ref([])
         const airports = ref([])
+        const aircraftsMap = ref({})
 
-        const fetchAirports = () => {
-            return airportApi
+        const fetchAirports = () =>
+            airportApi
                 .getAirports()
                 .then((res) => (airports.value = res.data))
                 .catch((err) => console.error('Ошибка получения аэропортов', err))
-        }
 
-        const fetchRoute = () => {
-            return routeApi
+        const fetchAircrafts = () =>
+            aircraftApi
+                .getAircrafts()
+                .then((res) => {
+                    aircraftsMap.value = {}
+                    res.data.forEach((a) => {
+                        aircraftsMap.value[a.id] = a.tail_number
+                    })
+                })
+                .catch((err) => console.error('Ошибка получения самолётов', err))
+
+        const fetchRoute = () =>
+            routeApi
                 .getRoutes()
                 .then((res) => {
                     routeData.value = res.data.find((r) => r.id === routeId) || null
                 })
                 .catch((err) => console.error('Ошибка получения маршрута', err))
-        }
 
-        const fetchFlights = () => {
+        const fetchFlights = () =>
             flightApi
                 .getFlightsByRoute(routeId)
                 .then((res) => (flights.value = res.data))
                 .catch((err) => console.error('Ошибка получения рейсов', err))
-        }
 
         const getAirportLabel = (id) => {
             const a = airports.value.find((x) => x.id === id)
             return a ? `${a.city} (${a.code})` : id
         }
 
-        const routeModal = ref(null)
-        const openEditRouteModal = () => {
-            routeModal.value.open()
-        }
+        const getTailNumber = (aircraftId) => aircraftsMap.value[aircraftId] || aircraftId
 
-        const handleUpdateRoute = (updatedRoute) => {
+        const routeModal = ref(null)
+        const openEditRouteModal = () => routeModal.value.open()
+
+        const handleUpdateRoute = (updatedRoute) =>
             routeApi
                 .updateRoute(updatedRoute.id, updatedRoute)
                 .then(fetchRoute)
                 .catch((err) => console.error('Ошибка обновления маршрута', err))
-        }
+
+        const deleteFlight = (flightId) =>
+            flightApi
+                .deleteFlight(flightId)
+                .then(fetchFlights)
+                .catch((err) => console.error('Ошибка удаления рейса', err))
 
         onMounted(async () => {
             await fetchAirports()
+            await fetchAircrafts()
             await fetchRoute()
             fetchFlights()
         })
@@ -119,8 +143,10 @@ export default defineComponent({
             flights,
             airports,
             getAirportLabel,
+            getTailNumber,
             openEditRouteModal,
             handleUpdateRoute,
+            deleteFlight,
             routeModal,
         }
     },
