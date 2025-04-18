@@ -5,6 +5,7 @@ import AdminAircraft from '@/views/AdminAircraft.vue'
 import AdminStaff from '@/views/AdminStaff.vue'
 import AdminRoutes from '@/views/AdminRoutes.vue'
 import AdminRoute from '@/views/AdminRoute.vue'
+import AdminFlight from '@/views/AdminFlight.vue'
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -13,6 +14,7 @@ const routes = [
     { path: '/admin/staff', name: 'AdminStaff', component: AdminStaff },
     { path: '/admin/routes', name: 'AdminRoutes', component: AdminRoutes },
     { path: '/admin/route/:id', name: 'AdminRoute', component: AdminRoute, props: true  },
+    { path: '/admin/flight/:id', name: 'AdminFlight', component: AdminFlight, props: true  },
 ]
 
 const router = createRouter({

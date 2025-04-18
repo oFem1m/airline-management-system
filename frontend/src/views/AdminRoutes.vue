@@ -94,7 +94,7 @@ export default defineComponent({
         }
 
         const goToRoute = (routeId) => {
-            router.push(`/admin/route/${routeId}`)
+            router.push({ name: 'AdminRoute', params: { id: routeId } })
         }
 
         const createRouteModal = ref(null)

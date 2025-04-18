@@ -139,8 +139,8 @@ export default {
         const showAircrafts = ref(false)
         const aircrafts = ref([])
 
-        const goToAircraft = (id) => {
-            router.push(`/admin/aircraft/${id}`)
+        const goToAircraft = (aircraftId) => {
+            router.push({ name: 'AdminAircraft', params: { id: aircraftId } })
         }
 
         const fetchAircrafts = () => {

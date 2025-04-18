@@ -29,7 +29,13 @@
             </div>
 
             <div v-if="flights.length" class="row mt-3">
-                <div v-for="flight in flights" :key="flight.id" class="col-md-4 mb-3">
+                <div
+                    v-for="flight in flights"
+                    :key="flight.id"
+                    class="col-md-4 mb-3"
+                    style="cursor: pointer"
+                    @click="goToFlight(flight.id)"
+                >
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Рейс {{ flight.flight_number }}</h5>
@@ -70,7 +76,7 @@
 
 <script>
 import { ref, onMounted, defineComponent } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import Header from '@/components/Header.vue'
 import RouteModal from '@/components/RouteModal.vue'
 import FlightModal from '@/components/FlightModal.vue'
@@ -88,12 +94,17 @@ export default defineComponent({
     },
     setup() {
         const route = useRoute()
+        const router = useRouter()
         const routeId = parseInt(route.params.id, 10)
 
         const routeData = ref(null)
         const flights = ref([])
         const airports = ref([])
         const aircraftsMap = ref({})
+
+        const goToFlight = (flightId) => {
+            router.push({ name: 'AdminFlight', params: { id: flightId } })
+        }
 
         const fetchAirports = () =>
             airportApi
@@ -187,6 +198,7 @@ export default defineComponent({
             flightModal,
             handleCreateFlight,
             handleUpdateFlight,
+            goToFlight,
         }
     },
 })
