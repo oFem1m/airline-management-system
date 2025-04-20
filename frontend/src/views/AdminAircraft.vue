@@ -3,7 +3,7 @@
         <Header />
 
         <div class="container mt-4">
-            <router-link to="/admin" class="back-link">
+            <router-link to="/admin/aircrafts" class="back-link">
                 <span class="back-arrow">&#8592;</span> Назад
             </router-link>
             <h1>Информация о самолёте</h1>
