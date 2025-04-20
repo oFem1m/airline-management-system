@@ -21,4 +21,9 @@ export default {
     deleteFlight(id) {
         return apiClient.delete(`/flight/${id}`)
     },
+    // Получить все рейсы, связанные с данным аэропортом
+    // (и вылет, и прилёт вместе)
+    getFlightsByAirport(airportId) {
+        return apiClient.get(`/flights/airport/${airportId}`)
+    },
 }

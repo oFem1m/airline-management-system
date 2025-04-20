@@ -6,11 +6,17 @@ import AdminStaff from '@/views/AdminStaff.vue'
 import AdminRoutes from '@/views/AdminRoutes.vue'
 import AdminRoute from '@/views/AdminRoute.vue'
 import AdminFlight from '@/views/AdminFlight.vue'
+import AdminAircrafts from '@/views/AdminAircrafts.vue'
+import AdminAirports from '@/views/AdminAirports.vue'
+import AdminAirport from '@/views/AdminAirport.vue'
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
     { path: '/admin', name: 'AdminPanel', component: AdminPanel },
+    { path: '/admin/aircrafts', name: 'AdminAircrafts', component: AdminAircrafts },
     { path: '/admin/aircraft/:id', name: 'AdminAircraft', component: AdminAircraft, props: true },
+    { path: '/admin/airports', name: 'AdminAirports', component: AdminAirports },
+    { path: '/admin/airport/:id', name: 'AdminAirport', component: AdminAirport, props: true },
     { path: '/admin/staff', name: 'AdminStaff', component: AdminStaff },
     { path: '/admin/routes', name: 'AdminRoutes', component: AdminRoutes },
     { path: '/admin/route/:id', name: 'AdminRoute', component: AdminRoute, props: true  },

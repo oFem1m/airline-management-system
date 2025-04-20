@@ -1,6 +1,9 @@
 import apiClient from './apiClient'
 
 export default {
+    getAirport(id) {
+        return apiClient.get(`/airport/${id}`)
+    },
     getAirports() {
         return apiClient.get('/airports')
     },
