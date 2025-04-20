@@ -19,7 +19,6 @@
 
             <hr class="my-4" />
 
-            <!-- Блок маршрутов -->
             <h2>Маршруты</h2>
             <div class="row mt-3">
                 <div v-for="r in routes" :key="r.id" class="col-md-4 mb-3">
@@ -46,7 +45,6 @@
 
             <hr class="my-4" />
 
-            <!-- Блок вылетов -->
             <h2>Рейсы (вылет)</h2>
             <div class="row mt-3">
                 <div
@@ -76,7 +74,6 @@
 
             <hr class="my-4" />
 
-            <!-- Блок прилётов -->
             <h2>Рейсы (прилет)</h2>
             <div class="row mt-3">
                 <div
@@ -104,8 +101,7 @@
                 </div>
             </div>
 
-            <!-- Модальное редактирование -->
-            <AirportModal ref="modal" :initialAirport="airport" @updateAirport="fetchAirport" />
+            <AirportModal ref="modal" :initialAirport="airport" @updateAirport="refreshAll" />
         </div>
     </div>
 </template>
@@ -125,83 +121,54 @@ export default {
     setup() {
         const router = useRouter()
         const route = useRoute()
-        const id = parseInt(route.params.id, 10)
+        const airportId = parseInt(route.params.id, 10)
 
         const airport = ref(null)
+        const allAirports = ref([])
         const routes = ref([])
         const departures = ref([])
         const arrivals = ref([])
-        const allAirports = ref([])
         const modal = ref(null)
 
-        const fetchAirport = () => {
-            airportApi
-                .getAirport(id)
-                .then((res) => (airport.value = res.data))
-                .catch((err) => console.error(err))
-        }
+        const fetchAirport = () =>
+            airportApi.getAirport(airportId).then((response) => (airport.value = response.data))
 
-        const fetchRoutes = () => {
+        const fetchAllAirports = () =>
+            airportApi.getAirports().then((response) => (allAirports.value = response.data))
+
+        const fetchRoutes = () =>
             routeApi
-                .getRoutesByAirport(id)
-                .then((res) => (routes.value = res.data))
-                .catch((err) => console.error(err))
-        }
+                .getRoutesByAirport(airportId)
+                .then((response) => (routes.value = response.data))
 
-        const fetchFlights = () => {
-            flightApi
-                .getFlightsByAirport(id)
-                .then((res) => {
-                    const flights = res.data
-                    return Promise.all(
-                        flights.map((f) =>
-                            routeApi
-                                .getRoute(f.route_id)
-                                .then((r) => ({ flight: f, route: r.data })),
-                        ),
-                    )
+        const fetchFlights = () =>
+            flightApi.getFlightsByAirport(airportId).then((response) => {
+                const flights = response.data
+                departures.value = flights.filter((flight) => {
+                    const route = routes.value.find((x) => x.id === flight.route_id)
+                    return route && route.departure_airport_id === airportId
                 })
-                .then((pairs) => {
-                    const mapped = pairs.map(({ flight, route }) => ({ ...flight, route }))
-                    departures.value = mapped.filter(
-                        (item) => item.route.departure_airport_id === id,
-                    )
-                    arrivals.value = mapped.filter((item) => item.route.arrival_airport_id === id)
+                arrivals.value = flights.filter((flight) => {
+                    const rt = routes.value.find((x) => x.id === flight.route_id)
+                    return rt && rt.arrival_airport_id === airportId
                 })
-                .catch((err) => console.error('Ошибка получения рейсов по аэропорту', err))
+            })
+
+        const label = (airportId) => {
+            const airport = allAirports.value.find((x) => x.id === airportId)
+            return airport ? `${airport.city} (${airport.code})` : airportId
         }
 
-        const fetchAllAirports = () => {
-            airportApi
-                .getAirports()
-                .then((res) => (allAirports.value = res.data))
-                .catch((err) => console.error(err))
-        }
-        const label = (aid) => {
-            const a = allAirports.value.find((x) => x.id === aid)
-            return a ? `${a.city} (${a.code})` : aid
-        }
+        const deleteRoute = (id) => routeApi.deleteRoute(id).then(refreshAll)
+        const deleteFlight = (id) => flightApi.deleteFlight(id).then(fetchFlights)
+        const goFlight = (id) => router.push({ name: 'AdminFlight', params: { id } })
+        const openEdit = () => modal.value.open()
 
-        const deleteRoute = (rid) => {
-            routeApi.deleteRoute(rid).then(fetchRoutes)
-        }
-        const deleteFlight = (fid) => {
-            flightApi.deleteFlight(fid).then(fetchFlights)
-        }
-        const goFlight = (fid) => {
-            router.push({ name: 'AdminFlight', params: { id: fid } })
-        }
+        const refreshAll = () => Promise.all([fetchAirport(), fetchRoutes()]).then(fetchFlights)
 
-        const openEdit = () => {
-            modal.value.open()
-        }
-
-        onMounted(() => {
-            fetchAirport()
-            fetchRoutes()
-            fetchFlights()
-            fetchAllAirports()
-        })
+        onMounted(() =>
+            Promise.all([fetchAirport(), fetchAllAirports(), fetchRoutes()]).then(fetchFlights),
+        )
 
         return {
             airport,
@@ -209,12 +176,12 @@ export default {
             departures,
             arrivals,
             modal,
-            fetchAirport,
+            label,
             deleteRoute,
             deleteFlight,
             goFlight,
             openEdit,
-            label,
+            refreshAll,
         }
     },
 }
