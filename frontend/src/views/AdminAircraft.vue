@@ -116,46 +116,62 @@ export default {
         const flights = ref([])
 
         const fetchAircraft = () =>
-            aircraftApi.getAircraft(aircraftId).then((r) => (aircraft.value = r.data))
+            aircraftApi.getAircraft(aircraftId).then(r => (aircraft.value = r.data))
 
         const fetchMaintenances = () =>
             maintenanceApi
                 .getMaintenancesByAircraft(aircraftId)
-                .then((r) => (maintenances.value = r.data))
+                .then(r => (maintenances.value = r.data))
 
         const fetchEmployees = () =>
-            employeeApi.getEmployees().then((r) => (employees.value = r.data))
+            employeeApi.getEmployees().then(r => (employees.value = r.data))
 
         const fetchFlights = () =>
-            flightApi.getFlightsByAircraft(aircraftId).then((r) => (flights.value = r.data))
+            flightApi.getFlightsByAircraft(aircraftId).then(r => (flights.value = r.data))
 
-        const deleteMaintenance = (id) =>
+        const deleteMaintenance = id =>
             maintenanceApi.deleteMaintenance(id).then(fetchMaintenances)
 
         const openCreateMaintenanceModal = () => {
             selectedMaintenance.value = null
             maintenanceModal.value.open()
         }
-        const openEditMaintenanceModal = (m) => {
+        const openEditMaintenanceModal = m => {
             selectedMaintenance.value = { ...m }
             maintenanceModal.value.open()
         }
-        const handleCreateMaintenance = () => fetchMaintenances()
-        const handleUpdateMaintenance = () => fetchMaintenances()
 
-        const deleteFlight = (id) => flightApi.deleteFlight(id).then(fetchFlights)
+        const handleCreateMaintenance = newMaintenance =>
+            maintenanceApi
+                .createMaintenance(newMaintenance)
+                .then(fetchMaintenances)
+                .catch(err => console.error('Ошибка создания обслуживания', err))
 
-        const goToFlight = (id) => router.push({ name: 'AdminFlight', params: { id } })
+        const handleUpdateMaintenance = updatedMaintenance =>
+            maintenanceApi
+                .updateMaintenance(updatedMaintenance.id, updatedMaintenance)
+                .then(fetchMaintenances)
+                .catch(err => console.error('Ошибка обновления обслуживания', err))
 
-        const getEmployeeName = (eid) => {
-            const e = employees.value.find((x) => x.id === eid)
+        const deleteFlight = id => flightApi.deleteFlight(id).then(fetchFlights)
+
+        const goToFlight = id =>
+            router.push({ name: 'AdminFlight', params: { id } })
+
+        const getEmployeeName = eid => {
+            const e = employees.value.find(x => x.id === eid)
             return e ? `${e.first_name} ${e.last_name}` : '—'
         }
 
         const maintenanceModal = ref(null)
 
         onMounted(() => {
-            Promise.all([fetchAircraft(), fetchMaintenances(), fetchEmployees(), fetchFlights()])
+            Promise.all([
+                fetchAircraft(),
+                fetchMaintenances(),
+                fetchEmployees(),
+                fetchFlights()
+            ])
         })
 
         return {
@@ -173,9 +189,9 @@ export default {
             goToFlight,
             getEmployeeName,
             aircraftId,
-            maintenanceModal,
+            maintenanceModal
         }
-    },
+    }
 }
 </script>
 

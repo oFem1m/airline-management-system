@@ -78,17 +78,17 @@ export default {
                 .catch((err) => console.error('Ошибка удаления самолёта', err))
         }
 
-        const handleCreateAircraft = () => {
-            fetchAircrafts()
-        }
+        const handleCreateAircraft = (newAircraft) =>
+            aircraftApi
+                .createAircraft(newAircraft)
+                .then(() => fetchAircrafts())
+                .catch((err) => console.error('Ошибка создания самолёта', err))
 
         const openCreateAircraftModal = () => {
             createAircraftModal.value.open()
         }
 
-        onMounted(() => {
-            fetchAircrafts()
-        })
+        onMounted(fetchAircrafts)
 
         return {
             aircrafts,
@@ -96,7 +96,7 @@ export default {
             goToAircraft,
             deleteAircraft,
             handleCreateAircraft,
-            openCreateAircraftModal,
+            openCreateAircraftModal
         }
     },
 }

@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <AirportModal ref="modal" :initialAirport="null" @createAirport="fetchAirports" />
+            <AirportModal ref="modal" :initialAirport="null" @createAirport="handleCreateAirport" />
         </div>
     </div>
 </template>
@@ -80,9 +80,13 @@ export default {
             modal.value.open()
         }
 
-        onMounted(() => {
-            fetchAirports()
-        })
+        const handleCreateAirport = (newAirport) =>
+            airportApi
+                .createAirport(newAirport)
+                .then(() => fetchAirports())
+                .catch((err) => console.error('Ошибка создания аэропорта', err))
+
+        onMounted(fetchAirports)
 
         return {
             airports,
@@ -90,7 +94,7 @@ export default {
             goToAirport,
             deleteAirport,
             openCreateModal,
-            fetchAirports,
+            handleCreateAirport,
         }
     },
 }
