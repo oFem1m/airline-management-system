@@ -43,6 +43,64 @@
                 </div>
             </div>
 
+            <hr class="my-4" />
+
+            <h2>Рейсы (вылет)</h2>
+            <div class="row mt-3">
+                <div
+                    v-for="f in departures"
+                    :key="f.id"
+                    class="col-md-4 mb-3"
+                    style="cursor: pointer"
+                    @click="goFlight(f.id)"
+                >
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Рейс {{ f.flight_number }}</h5>
+                            <p class="card-text">
+                                Время вылета: {{ f.departure_time }}<br />
+                                Статус: {{ f.status }}
+                            </p>
+                            <button
+                                class="btn btn-danger btn-sm float-end"
+                                @click.stop="deleteFlight(f.id)"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <h2>Рейсы (прилет)</h2>
+            <div class="row mt-3">
+                <div
+                    v-for="f in arrivals"
+                    :key="f.id"
+                    class="col-md-4 mb-3"
+                    style="cursor: pointer"
+                    @click="goFlight(f.id)"
+                >
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Рейс {{ f.flight_number }}</h5>
+                            <p class="card-text">
+                                Время прилёта: {{ f.arrival_time }}<br />
+                                Статус: {{ f.status }}
+                            </p>
+                            <button
+                                class="btn btn-danger btn-sm float-end"
+                                @click.stop="deleteFlight(f.id)"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <AirportModal ref="modal" :initialAirport="airport" @updateAirport="handleUpdateAirport" />
         </div>
     </div>
