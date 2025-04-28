@@ -2,7 +2,11 @@
     <div>
         <Header />
         <div class="container mt-4">
-            <router-link to="/admin/routes" class="back-link">
+            <router-link
+                v-if="flight"
+                :to="{ name: 'AdminRoute', params: { id: flight.route_id } }"
+                class="back-link"
+            >
                 <span class="back-arrow">&#8592;</span> Назад
             </router-link>
 
@@ -78,15 +82,12 @@
             :initialCrew="crew"
             @updateCrew="fetchCrew"
         />
-        <TicketModal
-            ref="ticketModal"
-            :flightId="flightId"
-            @addTicket="handleAddTicket"
-        />
+        <TicketModal ref="ticketModal" :flightId="flightId" @addTicket="handleAddTicket" />
         <FlightModal
+            v-if="flight"
             ref="flightModal"
             :initialFlight="flight"
-            :routeId="flight?.route_id"
+            :routeId="flight.route_id"
             @updateFlight="handleUpdateFlight"
         />
     </div>
@@ -124,7 +125,7 @@ export default {
         const fetchFlight = () => {
             flightApi
                 .getFlight(flightId)
-                .then(res => {
+                .then((res) => {
                     flight.value = res.data
                     return Promise.all([
                         aircraftApi.getAircraft(res.data.aircraft_id),
@@ -159,27 +160,27 @@ export default {
         const fetchCrew = () => {
             crewApi
                 .getCrewByFlight(flightId)
-                .then(res => { crew.value = res.data })
+                .then((res) => {
+                    crew.value = res.data || []
+                })
                 .catch(console.error)
         }
 
         const fetchTickets = () => {
             ticketApi
                 .getTicketsByFlight(flightId)
-                .then(res => { tickets.value = res.data })
+                .then((res) => {
+                    tickets.value = res.data || []
+                })
                 .catch(console.error)
         }
 
-        const deleteCrewMember = employeeId => {
-            crewApi.removeCrewMember(flightId, employeeId)
-                .then(fetchCrew)
-                .catch(console.error)
+        const deleteCrewMember = (employeeId) => {
+            crewApi.removeCrewMember(flightId, employeeId).then(fetchCrew).catch(console.error)
         }
 
-        const removeTicket = ticketId => {
-            ticketApi.deleteTicket(ticketId)
-                .then(fetchTickets)
-                .catch(console.error)
+        const removeTicket = (ticketId) => {
+            ticketApi.deleteTicket(ticketId).then(fetchTickets).catch(console.error)
         }
 
         const openCrewModal = () => crewModal.value.open()
@@ -188,10 +189,11 @@ export default {
 
         const handleAddTicket = () => fetchTickets()
 
-        const handleUpdateFlight = updatedFlight => {
-            flightApi.updateFlight(updatedFlight.id, updatedFlight)
+        const handleUpdateFlight = (updatedFlight) => {
+            flightApi
+                .updateFlight(updatedFlight.id, updatedFlight)
                 .then(fetchFlight)
-                .catch(err => console.error('Ошибка обновления рейса', err))
+                .catch((err) => console.error('Ошибка обновления рейса', err))
         }
 
         const crewModal = ref(null)

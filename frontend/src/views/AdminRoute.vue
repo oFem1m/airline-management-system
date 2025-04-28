@@ -180,7 +180,7 @@ export default defineComponent({
             await fetchAirports()
             await fetchAircrafts()
             await fetchRoute()
-            fetchFlights()
+            await fetchFlights()
         })
 
         return {
