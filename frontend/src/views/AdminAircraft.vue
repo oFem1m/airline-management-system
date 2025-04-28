@@ -55,6 +55,39 @@
                     </div>
                 </div>
             </div>
+
+            <hr class="my-4" />
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Рейсы самолёта</h2>
+            </div>
+            <div v-if="flights.length" class="row mt-3">
+                <div
+                    v-for="flight in flights"
+                    :key="flight.id"
+                    class="col-md-4 mb-3"
+                    style="cursor: pointer"
+                    @click="goToFlight(flight.id)"
+                >
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Рейс {{ flight.flight_number }}</h5>
+                            <p class="card-text">
+                                Вылет: {{ flight.departure_time }}<br />
+                                Прилет: {{ flight.arrival_time }}<br />
+                                Статус: {{ flight.status }}
+                            </p>
+                            <button
+                                class="btn btn-danger btn-sm float-end"
+                                @click.stop="deleteFlight(flight.id)"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p v-else class="text-muted">Нет запланированных рейсов.</p>
         </div>
 
         <MaintenanceModal
@@ -70,28 +103,29 @@
 
 <script>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import Header from '@/components/Header.vue'
 import aircraftApi from '@/API/aircraftApi'
 import maintenanceApi from '@/API/maintenanceApi'
 import employeeApi from '@/API/employeeApi'
+import flightApi from '@/API/flightApi'
 import MaintenanceModal from '@/components/MaintenanceModal.vue'
 
 export default {
     name: 'AdminAircraft',
     components: {
-        // eslint-disable-next-line vue/no-reserved-component-names
         Header,
         MaintenanceModal,
     },
     setup() {
         const route = useRoute()
+        const router = useRouter()
         const aircraftId = parseInt(route.params.id, 10)
 
         const aircraft = ref(null)
         const maintenances = ref([])
         const employees = ref([])
-
+        const flights = ref([])
         const selectedMaintenance = ref(null)
 
         const fetchAircraft = () => {
@@ -127,13 +161,26 @@ export default {
                 })
         }
 
-        const deleteMaintenance = (maintenanceId) => {
+        const fetchFlights = () => {
+            flightApi
+                .getFlightsByAircraft(aircraftId)
+                .then(response => {
+                    if(response.data) {
+                        flights.value = response.data
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при получении рейсов', error)
+                })
+        }
+
+        const deleteMaintenance = maintenanceId => {
             maintenanceApi
                 .deleteMaintenance(maintenanceId)
                 .then(() => {
                     fetchMaintenances()
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error('Ошибка при удалении обслуживания', error)
                 })
         }
@@ -170,8 +217,23 @@ export default {
                 })
         }
 
+        const deleteFlight = (flightId) => {
+            flightApi
+                .deleteFlight(flightId)
+                .then(() => {
+                    fetchFlights()
+                })
+                .catch((error) => {
+                    console.error('Ошибка при удалении рейса', error)
+                })
+        }
+
+        const goToFlight = (flightId) => {
+            router.push({ name: 'AdminFlight', params: { id: flightId } })
+        }
+
         const getEmployeeName = (employeeId) => {
-            const emp = employees.value.find((e) => e.id === employeeId)
+            const emp = employees.value.find(e => e.id === employeeId)
             return emp ? `${emp.first_name} ${emp.last_name} (ID: ${emp.id})` : 'Не задан'
         }
 
@@ -181,20 +243,24 @@ export default {
             fetchAircraft()
             fetchMaintenances()
             fetchEmployees()
+            fetchFlights()
         })
 
         return {
             aircraft,
             maintenances,
+            employees,
+            flights,
+            selectedMaintenance,
+            maintenanceModal,
+            aircraftId,
             deleteMaintenance,
             openCreateMaintenanceModal,
             openEditMaintenanceModal,
             handleCreateMaintenance,
             handleUpdateMaintenance,
-            selectedMaintenance,
-            maintenanceModal,
-            aircraftId,
-            employees,
+            deleteFlight,
+            goToFlight,
             getEmployeeName,
         }
     },
