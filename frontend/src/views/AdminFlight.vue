@@ -30,10 +30,16 @@
                             <h5 class="card-title">
                                 {{ member.first_name }} {{ member.last_name }}
                             </h5>
-                            <p class="card-text">{{ member.role_name }}</p>
+                            <p class="card-text">
+                                Email: {{ member.email }}<br />
+                                Телефон: {{ member.phone }}<br />
+                                Дата найма: {{ formatDate(member.hire_date) }}<br />
+                                Зарплата: {{ member.salary }}<br />
+                                Должность: {{ getRoleName(member.role_id) }}
+                            </p>
                             <button
                                 class="btn btn-danger btn-sm float-end"
-                                @click="removeCrewMember(member.employee_id)"
+                                @click="deleteCrewMember(member.id)"
                             >
                                 ×
                             </button>
@@ -69,7 +75,8 @@
         <CrewModal
             ref="crewModal"
             :flightId="flightId"
-            @addCrewMember="handleAddCrewMember"
+            :initialCrew="crew"
+            @updateCrew="fetchCrew"
         />
         <TicketModal
             ref="ticketModal"
@@ -98,6 +105,7 @@ import ticketApi from '@/API/ticketApi'
 import routeApi from '@/API/routeApi'
 import aircraftApi from '@/API/aircraftApi'
 import airportApi from '@/API/airportApi'
+import roleApi from '@/API/roleApi.js'
 
 export default {
     name: 'AdminFlight',
@@ -108,6 +116,7 @@ export default {
 
         const flight = ref(null)
         const crew = ref([])
+        const roles = ref([])
         const tickets = ref([])
         const aircraftInfo = ref('')
         const routeInfo = ref('')
@@ -115,7 +124,7 @@ export default {
         const fetchFlight = () => {
             flightApi
                 .getFlight(flightId)
-                .then((res) => {
+                .then(res => {
                     flight.value = res.data
                     return Promise.all([
                         aircraftApi.getAircraft(res.data.aircraft_id),
@@ -136,52 +145,73 @@ export default {
                 .catch(console.error)
         }
 
+        const fetchRoles = () => {
+            roleApi
+                .getRoles()
+                .then((response) => {
+                    roles.value = response.data
+                })
+                .catch((error) => {
+                    console.error('Ошибка получения ролей', error)
+                })
+        }
+
         const fetchCrew = () => {
             crewApi
                 .getCrewByFlight(flightId)
-                .then((res) => {
-                    crew.value = res.data
-                })
+                .then(res => { crew.value = res.data })
                 .catch(console.error)
         }
 
         const fetchTickets = () => {
             ticketApi
                 .getTicketsByFlight(flightId)
-                .then((res) => {
-                    tickets.value = res.data
-                })
+                .then(res => { tickets.value = res.data })
                 .catch(console.error)
         }
 
-        const deleteCrewMember = (employeeId) => {
-            crewApi.removeCrewMember(flightId, employeeId).then(fetchCrew).catch(console.error)
+        const deleteCrewMember = employeeId => {
+            crewApi.removeCrewMember(flightId, employeeId)
+                .then(fetchCrew)
+                .catch(console.error)
         }
 
-        const removeTicket = (ticketId) => {
-            ticketApi.deleteTicket(ticketId).then(fetchTickets).catch(console.error)
+        const removeTicket = ticketId => {
+            ticketApi.deleteTicket(ticketId)
+                .then(fetchTickets)
+                .catch(console.error)
         }
 
         const openCrewModal = () => crewModal.value.open()
         const openTicketModal = () => ticketModal.value.open()
         const editFlight = () => flightModal.value.open()
 
-        const handleAddCrewMember = () => fetchCrew()
         const handleAddTicket = () => fetchTickets()
 
-        const handleUpdateFlight = (updatedFlight) => {
-            flightApi
-                .updateFlight(updatedFlight.id, updatedFlight)
-                .then(() => fetchFlight())
-                .catch((err) => console.error('Ошибка обновления рейса', err))
+        const handleUpdateFlight = updatedFlight => {
+            flightApi.updateFlight(updatedFlight.id, updatedFlight)
+                .then(fetchFlight)
+                .catch(err => console.error('Ошибка обновления рейса', err))
         }
 
         const crewModal = ref(null)
         const ticketModal = ref(null)
         const flightModal = ref(null)
 
+        const formatDate = (isoStr) => {
+            if (!isoStr) return ''
+            const date = new Date(isoStr)
+            return date.toLocaleString()
+        }
+
+        const getRoleName = (roleId) => {
+            const role = roles.value.find((r) => r.id === roleId)
+            return role ? role.name : 'Не задана'
+        }
+
         onMounted(() => {
             fetchFlight()
+            fetchRoles()
             fetchCrew()
             fetchTickets()
         })
@@ -196,7 +226,8 @@ export default {
             openCrewModal,
             openTicketModal,
             editFlight,
-            handleAddCrewMember,
+            fetchRoles,
+            fetchCrew,
             handleAddTicket,
             deleteCrewMember,
             removeTicket,
@@ -204,6 +235,8 @@ export default {
             crewModal,
             ticketModal,
             flightModal,
+            formatDate,
+            getRoleName,
         }
     },
 }

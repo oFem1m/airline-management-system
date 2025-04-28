@@ -8,7 +8,7 @@
                 </div>
                 <div class="modal-body">
                     <label class="form-label">Выберите сотрудников</label>
-                    <div v-for="emp in employees" :key="emp.id" class="form-check">
+                    <div v-for="emp in availableEmployees" :key="emp.id" class="form-check">
                         <input
                             class="form-check-input"
                             type="checkbox"
@@ -31,9 +31,10 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, defineComponent } from 'vue'
+import { ref, computed, onMounted, defineComponent } from 'vue'
 import { Modal } from 'bootstrap'
 import employeeApi from '@/API/employeeApi'
+import crewApi from '@/API/crewApi'
 
 export default defineComponent({
     name: 'CrewModal',
@@ -43,36 +44,60 @@ export default defineComponent({
     },
     emits: ['updateCrew'],
     setup(props, { emit }) {
-        const employees = ref([])
+        const allEmployees = ref([])
         const selected = ref([])
         const modalElement = ref(null)
         let modalInstance = null
 
-        const fetchEmployees = () =>
-            employeeApi.getEmployees().then((r) => (employees.value = r.data))
-
-        watch(
-            () => props.initialCrew,
-            (crew) => {
-                selected.value = crew.map((m) => m.employee_id)
-            },
-            { immediate: true },
+        const initialCrewIds = computed(() =>
+            props.initialCrew.map(member => member.id)
         )
 
+        const availableEmployees = computed(() =>
+            allEmployees.value.filter(emp => !initialCrewIds.value.includes(emp.id))
+        )
+
+        const fetchEmployees = () =>
+            employeeApi.getEmployees().then(res => {
+                allEmployees.value = res.data
+            })
+
         const open = () => {
-            if (!modalInstance) modalInstance = new Modal(modalElement.value)
+            selected.value = []
+            if (!modalInstance) {
+                modalInstance = new Modal(modalElement.value)
+            }
             modalInstance.show()
         }
-        const close = () => modalInstance && modalInstance.hide()
+
+        const close = () => {
+            if (modalInstance) {
+                modalInstance.hide()
+            }
+        }
 
         const submitForm = () => {
-            emit('updateCrew', selected.value)
-            close()
+            const calls = selected.value.map(empId =>
+                crewApi.addCrewMember(props.flightId, { employeeId: empId })
+            )
+            Promise.all(calls)
+                .then(() => {
+                    emit('updateCrew')
+                    close()
+                })
+                .catch(err => console.error('Ошибка назначения сотрудников', err))
         }
 
         onMounted(fetchEmployees)
 
-        return { employees, selected, modalElement, open, close, submitForm }
+        return {
+            availableEmployees,
+            selected,
+            modalElement,
+            open,
+            close,
+            submitForm,
+        }
     },
 })
 </script>
