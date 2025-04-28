@@ -134,7 +134,7 @@ export default defineComponent({
         const fetchFlights = () =>
             flightApi
                 .getFlightsByRoute(routeId)
-                .then((res) => (flights.value = res.data))
+                .then((res) => (flights.value = res.data || []))
                 .catch((err) => console.error('Ошибка получения рейсов', err))
 
         const getAirportLabel = (id) => {
