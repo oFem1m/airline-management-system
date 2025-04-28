@@ -43,8 +43,6 @@
                 </div>
             </div>
 
-            <hr class="my-4" />
-
             <AirportModal ref="modal" :initialAirport="airport" @updateAirport="handleUpdateAirport" />
         </div>
     </div>
@@ -87,7 +85,7 @@ export default {
 
         const fetchFlights = () =>
             flightApi.getFlightsByAirport(airportId).then((response) => {
-                const flights = response.data
+                const flights = response.data || []
                 departures.value = flights.filter((flight) => {
                     const route = routes.value.find((x) => x.id === flight.route_id)
                     return route && route.departure_airport_id === airportId
