@@ -64,10 +64,24 @@
                     </div>
                 </div>
             </div>
-
-            <CrewModal ref="crewModal" :flightId="flightId" @addCrewMember="handleAddCrewMember" />
-            <TicketModal ref="ticketModal" :flightId="flightId" @addTicket="handleAddTicket" />
         </div>
+
+        <CrewModal
+            ref="crewModal"
+            :flightId="flightId"
+            @addCrewMember="handleAddCrewMember"
+        />
+        <TicketModal
+            ref="ticketModal"
+            :flightId="flightId"
+            @addTicket="handleAddTicket"
+        />
+        <FlightModal
+            ref="flightModal"
+            :initialFlight="flight"
+            :routeId="flight?.route_id"
+            @updateFlight="handleUpdateFlight"
+        />
     </div>
 </template>
 
@@ -77,6 +91,7 @@ import { useRoute } from 'vue-router'
 import Header from '@/components/Header.vue'
 import CrewModal from '@/components/CrewModal.vue'
 import TicketModal from '@/components/TicketModal.vue'
+import FlightModal from '@/components/FlightModal.vue'
 import flightApi from '@/API/flightApi'
 import crewApi from '@/API/crewApi'
 import ticketApi from '@/API/ticketApi'
@@ -86,7 +101,7 @@ import airportApi from '@/API/airportApi'
 
 export default {
     name: 'AdminFlight',
-    components: { Header, CrewModal, TicketModal },
+    components: { Header, CrewModal, TicketModal, FlightModal },
     setup() {
         const route = useRoute()
         const flightId = parseInt(route.params.id, 10)
@@ -97,7 +112,7 @@ export default {
         const aircraftInfo = ref('')
         const routeInfo = ref('')
 
-        function fetchFlight() {
+        const fetchFlight = () => {
             flightApi
                 .getFlight(flightId)
                 .then((res) => {
@@ -121,7 +136,7 @@ export default {
                 .catch(console.error)
         }
 
-        function fetchCrew() {
+        const fetchCrew = () => {
             crewApi
                 .getCrewByFlight(flightId)
                 .then((res) => {
@@ -130,7 +145,7 @@ export default {
                 .catch(console.error)
         }
 
-        function fetchTickets() {
+        const fetchTickets = () => {
             ticketApi
                 .getTicketsByFlight(flightId)
                 .then((res) => {
@@ -139,32 +154,31 @@ export default {
                 .catch(console.error)
         }
 
-        function openCrewModal() {
-            crewModal.value.open()
-        }
-
-        function openTicketModal() {
-            ticketModal.value.open()
-        }
-
-        function handleAddCrewMember() {
-            fetchCrew()
-        }
-
-        function handleAddTicket() {
-            fetchTickets()
-        }
-
-        function removeCrewMember(employeeId) {
+        const deleteCrewMember = (employeeId) => {
             crewApi.removeCrewMember(flightId, employeeId).then(fetchCrew).catch(console.error)
         }
 
-        function removeTicket(ticketId) {
+        const removeTicket = (ticketId) => {
             ticketApi.deleteTicket(ticketId).then(fetchTickets).catch(console.error)
+        }
+
+        const openCrewModal = () => crewModal.value.open()
+        const openTicketModal = () => ticketModal.value.open()
+        const editFlight = () => flightModal.value.open()
+
+        const handleAddCrewMember = () => fetchCrew()
+        const handleAddTicket = () => fetchTickets()
+
+        const handleUpdateFlight = (updatedFlight) => {
+            flightApi
+                .updateFlight(updatedFlight.id, updatedFlight)
+                .then(() => fetchFlight())
+                .catch((err) => console.error('Ошибка обновления рейса', err))
         }
 
         const crewModal = ref(null)
         const ticketModal = ref(null)
+        const flightModal = ref(null)
 
         onMounted(() => {
             fetchFlight()
@@ -181,12 +195,15 @@ export default {
             routeInfo,
             openCrewModal,
             openTicketModal,
+            editFlight,
             handleAddCrewMember,
             handleAddTicket,
-            removeCrewMember,
+            deleteCrewMember,
             removeTicket,
+            handleUpdateFlight,
             crewModal,
             ticketModal,
+            flightModal,
         }
     },
 }

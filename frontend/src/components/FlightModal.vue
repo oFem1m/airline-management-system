@@ -26,9 +26,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Самолет</label>
+                            <label class="form-label">Самолёт</label>
                             <select v-model="flight.aircraft_id" class="form-control" required>
-                                <option disabled value="">Выберите самолет</option>
+                                <option disabled value="">Выберите самолёт</option>
                                 <option
                                     v-for="aircraft in aircrafts"
                                     :key="aircraft.id"
@@ -79,21 +79,21 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, defineComponent } from 'vue'
+import { ref, computed, onMounted, defineComponent, watch } from 'vue'
 import { Modal } from 'bootstrap'
 import aircraftApi from '@/API/aircraftApi'
-import { toISO } from '../../utils/time.js'
+import { toISO, fromISO } from '../../utils/time.js'
 
 export default defineComponent({
     name: 'FlightModal',
     props: {
         initialFlight: {
             type: Object,
-            default: () => ({}), // Default to an empty object
+            default: () => ({}),
         },
         routeId: {
             type: Number,
-            required: true, // Make sure routeId is passed
+            required: true,
         },
     },
     emits: ['createFlight', 'updateFlight'],
@@ -108,8 +108,6 @@ export default defineComponent({
             status: 'scheduled',
         })
 
-        const isEditMode = computed(() => flight.value.id !== null)
-
         const resetForm = () => {
             flight.value = {
                 id: null,
@@ -121,17 +119,38 @@ export default defineComponent({
             }
         }
 
+        watch(
+            () => props.initialFlight,
+            (newVal) => {
+                if (newVal && newVal.id != null) {
+                    flight.value = {
+                        id: newVal.id,
+                        flight_number: newVal.flight_number,
+                        aircraft_id: newVal.aircraft_id,
+                        departure_time: fromISO(newVal.departure_time),
+                        arrival_time: fromISO(newVal.arrival_time),
+                        status: newVal.status,
+                    }
+                } else {
+                    resetForm()
+                }
+            },
+            { immediate: true }
+        )
+
+        const isEditMode = computed(() => flight.value.id !== null)
+
         const submitForm = () => {
-            const preparedFlight = {
+            const prepared = {
                 ...flight.value,
                 departure_time: toISO(flight.value.departure_time),
                 arrival_time: toISO(flight.value.arrival_time),
                 route_id: props.routeId,
             }
             if (isEditMode.value) {
-                emit('updateFlight', { ...preparedFlight })
+                emit('updateFlight', prepared)
             } else {
-                emit('createFlight', { ...preparedFlight })
+                emit('createFlight', prepared)
             }
             resetForm()
             close()
@@ -155,12 +174,7 @@ export default defineComponent({
                 .catch((err) => console.error('Ошибка получения самолётов', err))
         }
 
-        onMounted(() => {
-            if (props.initialFlight && Object.keys(props.initialFlight).length) {
-                flight.value = { ...props.initialFlight }
-            }
-            fetchAircrafts()
-        })
+        onMounted(fetchAircrafts)
 
         return {
             aircrafts,
