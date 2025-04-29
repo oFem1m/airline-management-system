@@ -60,7 +60,7 @@
                             <h5 class="card-title">Место: {{ ticket.seat_number }}</h5>
                             <p class="card-text">
                                 Цена: {{ ticket.price }}<br />
-                                Рейс: {{ ticket.flight_id }}
+                                Рейс: {{ getFlightNumber(ticket.flight_id) }}
                             </p>
                             <button
                                 class="btn btn-danger btn-sm float-end"
@@ -118,7 +118,7 @@ export default {
             ticketApi
                 .getTicketsByPassenger(passengerId)
                 .then(res => {
-                    tickets.value = res.data
+                    tickets.value = res.data || []
                     fetchFlights()
                 })
                 .catch(err => console.error('Ошибка получения билетов', err))
@@ -137,11 +137,11 @@ export default {
                 .catch(err => console.error('Ошибка получения рейсов', err))
         }
 
-        const goToFlight = (id) => {
+        const goToFlight = id => {
             router.push({ name: 'AdminFlight', params: { id } })
         }
 
-        const deleteTicket = (id) => {
+        const deleteTicket = id => {
             ticketApi
                 .deleteTicket(id)
                 .then(fetchTickets)
@@ -152,11 +152,16 @@ export default {
             editModal.value.open()
         }
 
-        const handleUpdate = (upd) => {
+        const handleUpdate = upd => {
             passengerApi
                 .updatePassenger(upd.id, upd)
                 .then(fetchPassenger)
                 .catch(err => console.error('Ошибка обновления пассажира', err))
+        }
+
+        const getFlightNumber = id => {
+            const f = flights.value.find(f => f.id === id)
+            return f ? f.flight_number : id
         }
 
         onMounted(() => {
@@ -172,9 +177,10 @@ export default {
             goToFlight,
             deleteTicket,
             openEditModal,
-            handleUpdate
+            handleUpdate,
+            getFlightNumber,
         }
-    }
+    },
 }
 </script>
 
