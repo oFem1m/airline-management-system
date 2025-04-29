@@ -31,9 +31,7 @@
                 <div v-for="member in crew" :key="member.employee_id" class="col-md-4 mb-3">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">
-                                {{ member.first_name }} {{ member.last_name }}
-                            </h5>
+                            <h5 class="card-title">{{ member.first_name }} {{ member.last_name }}</h5>
                             <p class="card-text">
                                 Email: {{ member.email }}<br />
                                 Телефон: {{ member.phone }}<br />
@@ -41,12 +39,7 @@
                                 Зарплата: {{ member.salary }}<br />
                                 Должность: {{ getRoleName(member.role_id) }}
                             </p>
-                            <button
-                                class="btn btn-danger btn-sm float-end"
-                                @click="deleteCrewMember(member.id)"
-                            >
-                                ×
-                            </button>
+                            <button class="btn btn-danger btn-sm float-end" @click="deleteCrewMember(member.id)">×</button>
                         </div>
                     </div>
                 </div>
@@ -60,16 +53,14 @@
             </div>
             <div class="row mt-3">
                 <div v-for="ticket in tickets" :key="ticket.id" class="col-md-4 mb-3">
-                    <div class="card" style="cursor:pointer" @click="openEditTicketModal(ticket)">
+                    <div class="card" style="cursor: pointer" @click="openEditTicketModal(ticket)">
                         <div class="card-body">
                             <h5 class="card-title">Место: {{ ticket.seat_number }}</h5>
-                            <p class="card-text">Цена: {{ ticket.price }}</p>
-                            <button
-                                class="btn btn-danger btn-sm float-end"
-                                @click.stop="removeTicket(ticket.id)"
-                            >
-                                ×
-                            </button>
+                            <p class="card-text">
+                                Цена: {{ ticket.price }}<br />
+                                Пассажир: {{ getPassengerName(ticket.passenger_id) }}
+                            </p>
+                            <button class="btn btn-danger btn-sm float-end" @click.stop="removeTicket(ticket.id)">×</button>
                         </div>
                     </div>
                 </div>
@@ -109,6 +100,7 @@ import FlightModal from '@/components/FlightModal.vue'
 import flightApi from '@/API/flightApi'
 import crewApi from '@/API/crewApi'
 import ticketApi from '@/API/ticketApi'
+import passengerApi from '@/API/passengerApi'
 import routeApi from '@/API/routeApi'
 import aircraftApi from '@/API/aircraftApi'
 import airportApi from '@/API/airportApi'
@@ -123,15 +115,16 @@ export default {
 
         const flight = ref(null)
         const crew = ref([])
-        const roles = ref([])
         const tickets = ref([])
+        const passengers = ref([])
         const aircraftInfo = ref('')
         const routeInfo = ref('')
         const selectedTicket = ref(null)
+        const roles = ref([])
 
+        // Существующая логика
         const fetchFlight = () => {
-            flightApi
-                .getFlight(flightId)
+            flightApi.getFlight(flightId)
                 .then((res) => {
                     flight.value = res.data
                     return Promise.all([
@@ -154,32 +147,27 @@ export default {
         }
 
         const fetchRoles = () => {
-            roleApi
-                .getRoles()
-                .then((response) => {
-                    roles.value = response.data
-                })
-                .catch((error) => {
-                    console.error('Ошибка получения ролей', error)
-                })
+            roleApi.getRoles()
+                .then(res => { roles.value = res.data })
+                .catch(err => console.error('Ошибка получения ролей', err))
         }
 
         const fetchCrew = () => {
-            crewApi
-                .getCrewByFlight(flightId)
-                .then((res) => {
-                    crew.value = res.data || []
-                })
+            crewApi.getCrewByFlight(flightId)
+                .then(res => { crew.value = res.data || [] })
                 .catch(console.error)
         }
 
         const fetchTickets = () => {
-            ticketApi
-                .getTicketsByFlight(flightId)
-                .then((res) => {
-                    tickets.value = res.data || []
-                })
-                .catch((error) => console.error('Ошибка получения билетов', error))
+            ticketApi.getTicketsByFlight(flightId)
+                .then(res => { tickets.value = res.data || [] })
+                .catch(err => console.error('Ошибка получения билетов', err))
+        }
+
+        const fetchPassengers = () => {
+            passengerApi.getPassengers()
+                .then(res => { passengers.value = res.data })
+                .catch(err => console.error('Ошибка получения пассажиров', err))
         }
 
         const deleteCrewMember = (employeeId) => {
@@ -191,7 +179,7 @@ export default {
         const removeTicket = (ticketId) => {
             ticketApi.deleteTicket(ticketId)
                 .then(fetchTickets)
-                .catch((error) => console.error('Ошибка удаления билета', error))
+                .catch(err => console.error('Ошибка удаления билета', err))
         }
 
         const openCrewModal = () => crewModal.value.open()
@@ -205,55 +193,61 @@ export default {
         }
         const editFlight = () => flightModal.value.open()
 
-        const handleAddTicket = (ticketData) => {
-            ticketApi.addTicket(flightId, ticketData)
+        const handleAddTicket = (data) => {
+            ticketApi.addTicket(flightId, data)
                 .then(fetchTickets)
-                .catch((error) => console.error('Ошибка при создании билета', error))
+                .catch(err => console.error('Ошибка при создании билета', err))
         }
-        const handleUpdateTicket = (ticketData) => {
-            ticketApi.updateTicket(ticketData.id, ticketData)
+        const handleUpdateTicket = (data) => {
+            ticketApi.updateTicket(data.id, data)
                 .then(fetchTickets)
-                .catch((error) => console.error('Ошибка при обновлении билета', error))
+                .catch(err => console.error('Ошибка при обновлении билета', err))
         }
 
         const handleUpdateFlight = (updatedFlight) => {
-            flightApi
-                .updateFlight(updatedFlight.id, updatedFlight)
+            flightApi.updateFlight(updatedFlight.id, updatedFlight)
                 .then(fetchFlight)
-                .catch((err) => console.error('Ошибка обновления рейса', err))
+                .catch(err => console.error('Ошибка обновления рейса', err))
+        }
+
+        const getRoleName = (roleId) => {
+            const r = roles.value.find(x => x.id === roleId)
+            return r ? r.name : 'Не задана'
+        }
+
+        const getPassengerName = (id) => {
+            const p = passengers.value.find(x => x.id === id)
+            return p ? `${p.first_name} ${p.last_name}` : '–'
+        }
+
+        const formatDate = (isoStr) => {
+            if (!isoStr) return ''
+            return new Date(isoStr).toLocaleString()
         }
 
         const crewModal = ref(null)
         const ticketModal = ref(null)
         const flightModal = ref(null)
 
-        const formatDate = (isoStr) => {
-            if (!isoStr) return ''
-            const date = new Date(isoStr)
-            return date.toLocaleString()
-        }
-
-        const getRoleName = (roleId) => {
-            const role = roles.value.find((r) => r.id === roleId)
-            return role ? role.name : 'Не задана'
-        }
-
         onMounted(() => {
             fetchFlight()
             fetchRoles()
             fetchCrew()
             fetchTickets()
+            fetchPassengers()
         })
 
         return {
             flightId,
             flight,
             crew,
-            roles,
             tickets,
+            passengers,
             aircraftInfo,
             routeInfo,
             selectedTicket,
+            roles,
+            fetchCrew,
             openCrewModal,
             openTicketModal,
             openEditTicketModal,
@@ -263,9 +257,9 @@ export default {
             handleAddTicket,
             handleUpdateTicket,
             handleUpdateFlight,
-            fetchCrew,
-            formatDate,
             getRoleName,
+            getPassengerName,
+            formatDate,
             crewModal,
             ticketModal,
             flightModal,

@@ -6,11 +6,28 @@
                     <h5 class="modal-title">
                         {{ isEditMode ? 'Редактировать билет' : 'Добавить билет' }}
                     </h5>
-                    <button type="button" class="btn-close" aria-label="Close"
-                            @click="close"></button>
+                    <button type="button" class="btn-close" aria-label="Close" @click="close"></button>
                 </div>
                 <div class="modal-body">
                     <form @submit.prevent="submitForm">
+                        <div class="mb-3">
+                            <label for="passenger" class="form-label">Пассажир</label>
+                            <select
+                                id="passenger"
+                                v-model.number="ticket.passenger_id"
+                                class="form-control"
+                                required
+                            >
+                                <option disabled value="">Выберите пассажира</option>
+                                <option
+                                    v-for="p in passengers"
+                                    :key="p.id"
+                                    :value="p.id"
+                                >
+                                    {{ p.first_name }} {{ p.last_name }}
+                                </option>
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label for="seatNumber" class="form-label">Место</label>
                             <input
@@ -42,33 +59,45 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { Modal } from 'bootstrap'
+import passengerApi from '@/API/passengerApi'
 
 export default {
     name: 'TicketModal',
     props: {
         flightId: {
             type: Number,
-            required: true
+            required: true,
         },
         initialTicket: {
             type: Object,
-            default: null
-        }
+            default: null,
+        },
     },
     emits: ['createTicket', 'updateTicket'],
     setup(props, { emit }) {
         const ticket = ref({
             id: null,
             flight_id: props.flightId,
+            passenger_id: '',
             seat_number: '',
-            price: 0
+            price: 0,
         })
+        const passengers = ref([])
         const modalElement = ref(null)
         let modalInstance = null
 
         const isEditMode = computed(() => ticket.value.id !== null)
+
+        // загружаем список пассажиров
+        const fetchPassengers = () => {
+            passengerApi.getPassengers()
+                .then(res => {
+                    passengers.value = res.data
+                })
+                .catch(err => console.error('Ошибка загрузки пассажиров', err))
+        }
 
         watch(
             () => props.initialTicket,
@@ -77,25 +106,27 @@ export default {
                     ticket.value = {
                         id: newVal.id,
                         flight_id: props.flightId,
+                        passenger_id: newVal.passenger_id,
                         seat_number: newVal.seat_number,
-                        price: newVal.price
+                        price: newVal.price,
                     }
                 } else {
                     ticket.value = {
                         id: null,
                         flight_id: props.flightId,
+                        passenger_id: '',
                         seat_number: '',
-                        price: 0
+                        price: 0,
                     }
                 }
             },
             { immediate: true }
         )
 
+        onMounted(fetchPassengers)
+
         const open = () => {
-            if (!modalInstance) {
-                modalInstance = new Modal(modalElement.value)
-            }
+            if (!modalInstance) modalInstance = new Modal(modalElement.value)
             modalInstance.show()
         }
         const close = () => {
@@ -113,13 +144,14 @@ export default {
 
         return {
             ticket,
+            passengers,
+            isEditMode,
             modalElement,
             open,
             close,
             submitForm,
-            isEditMode
         }
-    }
+    },
 }
 </script>
 
