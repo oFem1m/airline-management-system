@@ -74,7 +74,6 @@
                         />
                     </div>
 
-                    <!-- Кнопка поиска -->
                     <div class="col-md-1">
                         <button
                             class="btn btn-primary w-100"
@@ -87,15 +86,11 @@
                 </div>
             </div>
 
-            <div
-                class="d-flex overflow-auto"
-                v-if="flights.length"
-            >
+            <div v-if="flights.length">
                 <div
-                    class="card me-3"
                     v-for="flight in flights"
                     :key="flight.id"
-                    style="min-width: 200px;"
+                    class="card mb-3"
                 >
                     <div class="card-body">
                         <h5 class="card-title">Рейс {{ flight.flight_number }}</h5>
@@ -202,7 +197,6 @@ export default {
                 .then(responses => {
                     let all = []
                     responses.forEach(r => { all = all.concat(r.data) })
-                    // Отфильтруем по дате, если задана
                     if (date.value) {
                         all = all.filter(f =>
                             f.departure_time.startsWith(date.value)
