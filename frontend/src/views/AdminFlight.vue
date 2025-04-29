@@ -60,13 +60,13 @@
             </div>
             <div class="row mt-3">
                 <div v-for="ticket in tickets" :key="ticket.id" class="col-md-4 mb-3">
-                    <div class="card">
+                    <div class="card" style="cursor:pointer" @click="openEditTicketModal(ticket)">
                         <div class="card-body">
                             <h5 class="card-title">Место: {{ ticket.seat_number }}</h5>
                             <p class="card-text">Цена: {{ ticket.price }}</p>
                             <button
                                 class="btn btn-danger btn-sm float-end"
-                                @click="removeTicket(ticket.id)"
+                                @click.stop="removeTicket(ticket.id)"
                             >
                                 ×
                             </button>
@@ -82,7 +82,13 @@
             :initialCrew="crew"
             @updateCrew="fetchCrew"
         />
-        <TicketModal ref="ticketModal" :flightId="flightId" @addTicket="handleAddTicket" />
+        <TicketModal
+            ref="ticketModal"
+            :flightId="flightId"
+            :initialTicket="selectedTicket"
+            @createTicket="handleAddTicket"
+            @updateTicket="handleUpdateTicket"
+        />
         <FlightModal
             v-if="flight"
             ref="flightModal"
@@ -121,6 +127,7 @@ export default {
         const tickets = ref([])
         const aircraftInfo = ref('')
         const routeInfo = ref('')
+        const selectedTicket = ref(null)
 
         const fetchFlight = () => {
             flightApi
@@ -172,22 +179,42 @@ export default {
                 .then((res) => {
                     tickets.value = res.data || []
                 })
-                .catch(console.error)
+                .catch((error) => console.error('Ошибка получения билетов', error))
         }
 
         const deleteCrewMember = (employeeId) => {
-            crewApi.removeCrewMember(flightId, employeeId).then(fetchCrew).catch(console.error)
+            crewApi.removeCrewMember(flightId, employeeId)
+                .then(fetchCrew)
+                .catch(console.error)
         }
 
         const removeTicket = (ticketId) => {
-            ticketApi.deleteTicket(ticketId).then(fetchTickets).catch(console.error)
+            ticketApi.deleteTicket(ticketId)
+                .then(fetchTickets)
+                .catch((error) => console.error('Ошибка удаления билета', error))
         }
 
         const openCrewModal = () => crewModal.value.open()
-        const openTicketModal = () => ticketModal.value.open()
+        const openTicketModal = () => {
+            selectedTicket.value = null
+            ticketModal.value.open()
+        }
+        const openEditTicketModal = (ticket) => {
+            selectedTicket.value = { ...ticket }
+            ticketModal.value.open()
+        }
         const editFlight = () => flightModal.value.open()
 
-        const handleAddTicket = () => fetchTickets()
+        const handleAddTicket = (ticketData) => {
+            ticketApi.addTicket(flightId, ticketData)
+                .then(fetchTickets)
+                .catch((error) => console.error('Ошибка при создании билета', error))
+        }
+        const handleUpdateTicket = (ticketData) => {
+            ticketApi.updateTicket(ticketData.id, ticketData)
+                .then(fetchTickets)
+                .catch((error) => console.error('Ошибка при обновлении билета', error))
+        }
 
         const handleUpdateFlight = (updatedFlight) => {
             flightApi
@@ -222,23 +249,26 @@ export default {
             flightId,
             flight,
             crew,
+            roles,
             tickets,
             aircraftInfo,
             routeInfo,
+            selectedTicket,
             openCrewModal,
             openTicketModal,
+            openEditTicketModal,
             editFlight,
-            fetchRoles,
-            fetchCrew,
-            handleAddTicket,
             deleteCrewMember,
             removeTicket,
+            handleAddTicket,
+            handleUpdateTicket,
             handleUpdateFlight,
+            fetchCrew,
+            formatDate,
+            getRoleName,
             crewModal,
             ticketModal,
             flightModal,
-            formatDate,
-            getRoleName,
         }
     },
 }

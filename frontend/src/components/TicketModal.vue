@@ -3,13 +3,11 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Добавить билет</h5>
-                    <button
-                        type="button"
-                        class="btn-close"
-                        aria-label="Close"
-                        @click="close"
-                    ></button>
+                    <h5 class="modal-title">
+                        {{ isEditMode ? 'Редактировать билет' : 'Добавить билет' }}
+                    </h5>
+                    <button type="button" class="btn-close" aria-label="Close"
+                            @click="close"></button>
                 </div>
                 <div class="modal-body">
                     <form @submit.prevent="submitForm">
@@ -28,12 +26,14 @@
                             <input
                                 type="number"
                                 id="price"
-                                v-model="ticket.price"
+                                v-model.number="ticket.price"
                                 class="form-control"
                                 required
                             />
                         </div>
-                        <button type="submit" class="btn btn-primary">Добавить</button>
+                        <button type="submit" class="btn btn-primary">
+                            {{ isEditMode ? 'Сохранить' : 'Добавить' }}
+                        </button>
                     </form>
                 </div>
             </div>
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Modal } from 'bootstrap'
 
 export default {
@@ -50,17 +50,47 @@ export default {
     props: {
         flightId: {
             type: Number,
-            required: true,
+            required: true
         },
+        initialTicket: {
+            type: Object,
+            default: null
+        }
     },
-    emits: ['addTicket'],
+    emits: ['createTicket', 'updateTicket'],
     setup(props, { emit }) {
         const ticket = ref({
+            id: null,
+            flight_id: props.flightId,
             seat_number: '',
-            price: 0,
+            price: 0
         })
         const modalElement = ref(null)
         let modalInstance = null
+
+        const isEditMode = computed(() => ticket.value.id !== null)
+
+        watch(
+            () => props.initialTicket,
+            (newVal) => {
+                if (newVal && newVal.id != null) {
+                    ticket.value = {
+                        id: newVal.id,
+                        flight_id: props.flightId,
+                        seat_number: newVal.seat_number,
+                        price: newVal.price
+                    }
+                } else {
+                    ticket.value = {
+                        id: null,
+                        flight_id: props.flightId,
+                        seat_number: '',
+                        price: 0
+                    }
+                }
+            },
+            { immediate: true }
+        )
 
         const open = () => {
             if (!modalInstance) {
@@ -68,25 +98,28 @@ export default {
             }
             modalInstance.show()
         }
-
         const close = () => {
-            if (modalInstance) {
-                modalInstance.hide()
-            }
+            if (modalInstance) modalInstance.hide()
         }
 
         const submitForm = () => {
-            emit('addTicket', { flightId: props.flightId, ...ticket.value })
+            if (isEditMode.value) {
+                emit('updateTicket', { ...ticket.value })
+            } else {
+                emit('createTicket', { ...ticket.value })
+            }
             close()
         }
 
         return {
             ticket,
+            modalElement,
             open,
             close,
             submitForm,
+            isEditMode
         }
-    },
+    }
 }
 </script>
 

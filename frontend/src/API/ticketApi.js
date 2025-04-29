@@ -15,6 +15,15 @@ export default {
         })
     },
 
+    // Обновление существующего билета
+    updateTicket(id, ticket) {
+        return apiClient.put(`/ticket/${id}`, {
+            flight_id: ticket.flight_id,
+            seat_number: ticket.seat_number,
+            price: ticket.price,
+        })
+    },
+
     // Удаление билета
     deleteTicket(ticketId) {
         return apiClient.delete(`/ticket/${ticketId}`)
