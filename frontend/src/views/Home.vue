@@ -91,12 +91,14 @@
                     v-for="flight in flights"
                     :key="flight.id"
                     class="card mb-3"
+                    style="cursor: pointer"
+                    @click="goToFlight(flight.id)"
                 >
                     <div class="card-body">
                         <h5 class="card-title">Рейс {{ flight.flight_number }}</h5>
                         <p class="card-text">
-                            Вылет: {{ formatDate(flight.departure_time) }}<br/>
-                            Прилет: {{ formatDate(flight.arrival_time) }}<br/>
+                            Вылет: {{ formatDate(flight.departure_time) }}<br />
+                            Прилет: {{ formatDate(flight.arrival_time) }}<br />
                             Статус: {{ flight.status }}
                         </p>
                     </div>
@@ -113,11 +115,13 @@ import Header from '@/components/Header.vue'
 import airportApi from '@/API/airportApi'
 import routeApi from '@/API/routeApi'
 import flightApi from '@/API/flightApi'
+import { useRouter } from 'vue-router'
 
 export default {
     name: 'Home',
     components: { Header },
     setup() {
+        const router = useRouter()
         const airports = ref([])
         const fromQuery = ref('')
         const toQuery = ref('')
@@ -130,9 +134,15 @@ export default {
         const showFromSuggestions = ref(false)
         const showToSuggestions = ref(false)
 
+        const goToFlight = (flightId) => {
+            router.push({ name: 'Flight', params: { id: flightId } })
+        }
+
         onMounted(() => {
             airportApi.getAirports()
-                .then(res => { airports.value = res.data })
+                .then(res => {
+                    airports.value = res.data
+                })
                 .catch(console.error)
         })
 
@@ -153,6 +163,7 @@ export default {
             fromAirport.value = null
             showFromSuggestions.value = !!fromQuery.value
         }
+
         function onToInput() {
             toAirport.value = null
             showToSuggestions.value = !!toQuery.value
@@ -163,6 +174,7 @@ export default {
             fromQuery.value = `${a.city} (${a.code})`
             showFromSuggestions.value = false
         }
+
         function selectTo(a) {
             toAirport.value = a
             toQuery.value = `${a.city} (${a.code})`
@@ -196,7 +208,9 @@ export default {
                 })
                 .then(responses => {
                     let all = []
-                    responses.forEach(r => { all = all.concat(r.data) })
+                    responses.forEach(r => {
+                        all = all.concat(r.data)
+                    })
                     if (date.value) {
                         all = all.filter(f =>
                             f.departure_time.startsWith(date.value)
@@ -212,16 +226,25 @@ export default {
         }
 
         return {
-            fromQuery, toQuery, date,
-            flights, searched,
-            showFromSuggestions, showToSuggestions,
-            filteredFromAirports, filteredToAirports,
-            onFromInput, onToInput,
-            selectFrom, selectTo,
-            swapFromTo, searchFlights,
+            fromQuery,
+            toQuery,
+            date,
+            flights,
+            searched,
+            showFromSuggestions,
+            showToSuggestions,
+            filteredFromAirports,
+            filteredToAirports,
+            onFromInput,
+            onToInput,
+            selectFrom,
+            selectTo,
+            swapFromTo,
+            searchFlights,
             formatDate,
+            goToFlight,
         }
-    },
+    }
 }
 </script>
 
