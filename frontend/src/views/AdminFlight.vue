@@ -122,7 +122,6 @@ export default {
         const selectedTicket = ref(null)
         const roles = ref([])
 
-        // Существующая логика
         const fetchFlight = () => {
             flightApi.getFlight(flightId)
                 .then((res) => {
