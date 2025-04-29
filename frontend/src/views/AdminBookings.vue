@@ -25,6 +25,12 @@
                                 Дата бронирования: {{ b.booking_date }}<br />
                                 Статус: {{ b.status }}
                             </p>
+                            <button
+                                class="btn btn-danger btn-sm float-end"
+                                @click.stop="deleteBooking(b.id)"
+                            >
+                                ×
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -67,6 +73,13 @@ export default {
             router.push({ name: 'AdminBooking', params: { id: bookingId } })
         }
 
+        const deleteBooking = (id) => {
+            bookingApi
+                .deleteBooking(id)
+                .then(fetchBookings)
+                .catch((err) => console.error('Ошибка удаления бронирования', err))
+        }
+
         const fetchPassengers = () => {
             passengerApi.getPassengers()
                 .then(res => {
@@ -103,6 +116,7 @@ export default {
             goToBooking,
             openCreateModal,
             handleCreate,
+            deleteBooking,
             getPassengerName,
         }
     },
