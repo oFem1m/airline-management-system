@@ -6,7 +6,7 @@
                     <h5 class="modal-title">Назначение экипажа</h5>
                     <button type="button" class="btn-close" @click="close"></button>
                 </div>
-                <div class="modal-body">
+                <div v-if="availableEmployees.length" class="modal-body">
                     <label class="form-label">Выберите сотрудников</label>
                     <div v-for="emp in availableEmployees" :key="emp.id" class="form-check">
                         <input
@@ -20,6 +20,9 @@
                             {{ emp.first_name }} {{ emp.last_name }} (ID: {{ emp.id }})
                         </label>
                     </div>
+                </div>
+                <div v-else class="modal-body">
+                    <label class="form-label">Нет доступных сотрудников</label>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" @click="close">Отмена</button>
