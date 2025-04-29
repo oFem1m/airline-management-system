@@ -21,7 +21,7 @@
                     :key="p.id"
                     class="col-md-4 mb-3"
                     style="cursor: pointer"
-                    @click="openEditModal(p)"
+                    @click="goToPassenger(p.id)"
                 >
                     <div class="card">
                         <div class="card-body">
@@ -45,9 +45,7 @@
 
         <PassengerModal
             ref="passengerModal"
-            :initialPassenger="selectedPassenger"
             @createPassenger="handleCreate"
-            @updatePassenger="handleUpdate"
         />
     </div>
 </template>
@@ -65,22 +63,20 @@ export default {
     setup() {
         const router = useRouter()
         const passengers = ref([])
-        const selectedPassenger = ref(null)
         const passengerModal = ref(null)
 
         const fetchPassengers = () => {
             passengerApi
                 .getPassengers()
-                .then((res) => (passengers.value = res.data))
+                .then((res) => { passengers.value = res.data })
                 .catch((err) => console.error('Ошибка получения пассажиров', err))
         }
 
-        const openCreateModal = () => {
-            selectedPassenger.value = null
-            passengerModal.value.open()
+        const goToPassenger = (id) => {
+            router.push({ name: 'AdminPassenger', params: { id } })
         }
-        const openEditModal = (p) => {
-            selectedPassenger.value = { ...p }
+
+        const openCreateModal = () => {
             passengerModal.value.open()
         }
 
@@ -89,12 +85,6 @@ export default {
                 .addPassenger(newP)
                 .then(fetchPassengers)
                 .catch((err) => console.error('Ошибка создания пассажира', err))
-        }
-        const handleUpdate = (updP) => {
-            passengerApi
-                .updatePassenger(updP.id, updP)
-                .then(fetchPassengers)
-                .catch((err) => console.error('Ошибка обновления пассажира', err))
         }
 
         const deletePassenger = (id) => {
@@ -108,12 +98,10 @@ export default {
 
         return {
             passengers,
-            selectedPassenger,
             passengerModal,
+            goToPassenger,
             openCreateModal,
-            openEditModal,
             handleCreate,
-            handleUpdate,
             deletePassenger,
         }
     },

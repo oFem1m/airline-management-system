@@ -6,13 +6,18 @@ export default {
         return apiClient.get(`/tickets/flight/${flightId}`)
     },
 
+    // Получение билетов для конкретного пассажира
+    getTicketsByPassenger(passengerId) {
+        return apiClient.get(`/tickets/passenger/${passengerId}`)
+    },
+
     // Создание нового билета
     addTicket(flightId, ticket) {
         return apiClient.post('/ticket', {
             flight_id: flightId,
             passenger_id: ticket.passenger_id,
             seat_number: ticket.seat_number,
-            price: ticket.price,
+            price: ticket.price
         })
     },
 
@@ -22,12 +27,12 @@ export default {
             flight_id: ticket.flight_id,
             passenger_id: ticket.passenger_id,
             seat_number: ticket.seat_number,
-            price: ticket.price,
+            price: ticket.price
         })
     },
 
     // Удаление билета
     deleteTicket(ticketId) {
         return apiClient.delete(`/ticket/${ticketId}`)
-    },
+    }
 }
