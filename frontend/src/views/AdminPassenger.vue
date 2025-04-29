@@ -22,6 +22,26 @@
             <hr class="my-4" />
 
             <div class="d-flex justify-content-between align-items-center">
+                <h2>Бронирования пассажира</h2>
+            </div>
+            <div v-if="bookings.length" class="row mt-3">
+                <div v-for="b in bookings" :key="b.id" class="col-md-4 mb-3">
+                    <div class="card" style="cursor: pointer" @click="goToBooking(b.id)">
+                        <div class="card-body">
+                            <h5 class="card-title">№ {{ b.id }}</h5>
+                            <p class="card-text">
+                                Дата бронирования: {{ b.booking_date }}<br />
+                                Статус: {{ b.status }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p v-else class="text-muted">Нет бронирований.</p>
+
+            <hr class="my-4" />
+
+            <div class="d-flex justify-content-between align-items-center">
                 <h2>Рейсы пассажира</h2>
             </div>
             <div v-if="flights.length" class="row mt-3">
@@ -91,6 +111,7 @@ import PassengerModal from '@/components/PassengerModal.vue'
 import passengerApi from '@/API/passengerApi'
 import ticketApi from '@/API/ticketApi'
 import flightApi from '@/API/flightApi'
+import bookingApi from '@/API/bookingApi.js'
 
 export default {
     name: 'AdminPassenger',
@@ -101,6 +122,7 @@ export default {
         const passengerId = parseInt(route.params.id, 10)
 
         const passenger = ref(null)
+        const bookings = ref([])
         const tickets = ref([])
         const flights = ref([])
         const editModal = ref(null)
@@ -112,6 +134,18 @@ export default {
                     passenger.value = res.data
                 })
                 .catch(err => console.error('Ошибка получения пассажира', err))
+        }
+
+        const fetchBookings = () => {
+            bookingApi.getBookingsByPassenger(passengerId)
+                .then(res => {
+                    bookings.value = res.data
+                })
+                .catch(err => console.error('Ошибка получения бронирований', err))
+        }
+
+        const goToBooking = (bookingId) => {
+            router.push({ name: 'AdminBooking', params: { id: bookingId } })
         }
 
         const fetchTickets = () => {
@@ -166,15 +200,18 @@ export default {
 
         onMounted(() => {
             fetchPassenger()
+            fetchBookings()
             fetchTickets()
         })
 
         return {
             passenger,
+            bookings,
             tickets,
             flights,
             editModal,
             goToFlight,
+            goToBooking,
             deleteTicket,
             openEditModal,
             handleUpdate,

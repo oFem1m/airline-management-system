@@ -17,6 +17,12 @@ export default {
     getBooking(id) {
         return apiClient.get(`/booking/${id}`)
     },
+
+    // Получение бронирований по ID пассажира
+    getBookingsByPassenger(passengerId) {
+        return apiClient.get(`/bookings/passenger/${passengerId}`)
+    },
+
     // Обновление бронирования по ID
     updateBooking(id, booking) {
         return apiClient.put(`/booking/${id}`, {

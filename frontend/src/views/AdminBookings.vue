@@ -17,7 +17,7 @@
 
             <div class="row">
                 <div v-for="b in bookings" :key="b.id" class="col-md-4 mb-3">
-                    <div class="card"style="cursor: pointer" @click="goToBooking(b.id)">
+                    <div class="card" style="cursor: pointer" @click="goToBooking(b.id)">
                         <div class="card-body">
                             <h5 class="card-title">№ {{ b.id }}</h5>
                             <p class="card-text">
