@@ -17,7 +17,7 @@
 
             <div class="row">
                 <div v-for="b in bookings" :key="b.id" class="col-md-4 mb-3">
-                    <div class="card">
+                    <div class="card"style="cursor: pointer" @click="goToBooking(b.id)">
                         <div class="card-body">
                             <h5 class="card-title">№ {{ b.id }}</h5>
                             <p class="card-text">
@@ -44,11 +44,13 @@ import Header from '@/components/Header.vue'
 import BookingModal from '@/components/BookingModal.vue'
 import bookingApi from '@/API/bookingApi'
 import passengerApi from '@/API/passengerApi'
+import { useRouter } from 'vue-router'
 
 export default {
     name: 'AdminBookings',
     components: { Header, BookingModal },
     setup() {
+        const router = useRouter()
         const bookings = ref([])
         const passengers = ref([])
         const bookingModal = ref(null)
@@ -59,6 +61,10 @@ export default {
                     bookings.value = res.data
                 })
                 .catch(err => console.error('Ошибка получения бронирований', err))
+        }
+
+        const goToBooking = (bookingId) => {
+            router.push({ name: 'AdminBooking', params: { id: bookingId } })
         }
 
         const fetchPassengers = () => {
@@ -94,6 +100,7 @@ export default {
         return {
             bookings,
             bookingModal,
+            goToBooking,
             openCreateModal,
             handleCreate,
             getPassengerName,

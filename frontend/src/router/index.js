@@ -12,6 +12,7 @@ import AdminAirport from '@/views/AdminAirport.vue'
 import AdminPassengers from '@/views/AdminPassengers.vue'
 import AdminPassenger from '@/views/AdminPassenger.vue'
 import AdminBookings from '@/views/AdminBookings.vue'
+import AdminBooking from '@/views/AdminBooking.vue'
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -27,6 +28,7 @@ const routes = [
     { path: '/admin/passengers', name: 'AdminPassengers', component: AdminPassengers },
     { path: '/admin/passenger/:id', name: 'AdminPassenger', component: AdminPassenger, props: true },
     { path: '/admin/bookings', name: 'AdminBookings', component: AdminBookings },
+    { path: '/admin/booking/:id', name: 'AdminBooking', component: AdminBooking, props: true },
 ]
 
 const router = createRouter({

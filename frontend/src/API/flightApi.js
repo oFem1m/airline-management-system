@@ -1,6 +1,9 @@
 import apiClient from './apiClient'
 
 export default {
+    getFlights() {
+        return apiClient.get('/flights')
+    },
     // Получение всех рейсов для конкретного маршрута по его ID
     getFlightsByRoute(routeId) {
         return apiClient.get(`/flights/route/${routeId}`)
