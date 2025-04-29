@@ -54,6 +54,15 @@
                     Управление пассажирами
                 </router-link>
             </div>
+
+            <hr class="my-4" />
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Бронирования</h2>
+                <router-link to="/admin/bookings" class="btn btn-secondary">
+                    Управление бронированиями
+                </router-link>
+            </div>
         </div>
     </div>
 </template>

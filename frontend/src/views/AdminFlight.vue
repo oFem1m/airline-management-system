@@ -217,7 +217,7 @@ export default {
 
         const getPassengerName = (id) => {
             const p = passengers.value.find(x => x.id === id)
-            return p ? `${p.first_name} ${p.last_name}` : '–'
+            return p ? `${p.first_name} ${p.last_name} (ID: ${p.id})` : '–'
         }
 
         const formatDate = (isoStr) => {
