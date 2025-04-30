@@ -110,18 +110,20 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import Header from '@/components/Header.vue'
 import airportApi from '@/API/airportApi'
 import routeApi from '@/API/routeApi'
 import flightApi from '@/API/flightApi'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 export default {
     name: 'Home',
     components: { Header },
     setup() {
         const router = useRouter()
+        const route = useRoute()
+
         const airports = ref([])
         const fromQuery = ref('')
         const toQuery = ref('')
@@ -134,14 +136,23 @@ export default {
         const showFromSuggestions = ref(false)
         const showToSuggestions = ref(false)
 
-        const goToFlight = (flightId) => {
-            router.push({ name: 'Flight', params: { id: flightId } })
-        }
-
+        // Инициализация из query-параметров
         onMounted(() => {
             airportApi.getAirports()
                 .then(res => {
                     airports.value = res.data
+
+                    const { from, to, date: qdate } = route.query
+                    if (from && to) {
+                        const f = airports.value.find(a => a.id === +from)
+                        const t = airports.value.find(a => a.id === +to)
+                        if (f && t) {
+                            selectFrom(f)
+                            selectTo(t)
+                            if (qdate) date.value = qdate
+                            searchFlights()
+                        }
+                    }
                 })
                 .catch(console.error)
         })
@@ -196,6 +207,16 @@ export default {
 
             if (!fromAirport.value || !toAirport.value) return
 
+            // Обновляем URL
+            router.replace({
+                name: 'Home',
+                query: {
+                    from: fromAirport.value.id,
+                    to: toAirport.value.id,
+                    date: date.value || undefined
+                }
+            })
+
             routeApi.getRoutes()
                 .then(res => {
                     const validRoutes = res.data.filter(r =>
@@ -223,6 +244,10 @@ export default {
 
         function formatDate(iso) {
             return new Date(iso).toLocaleString()
+        }
+
+        function goToFlight(flightId) {
+            router.push({ name: 'Flight', params: { id: flightId } })
         }
 
         return {

@@ -2,9 +2,9 @@
     <div>
         <Header />
         <div class="container mt-4">
-            <router-link to="/" class="back-link">
+            <a href="#" class="back-link" @click.prevent="goBack">
                 <span class="back-arrow">&#8592;</span> Назад
-            </router-link>
+            </a>
 
             <h1>Информация о рейсе</h1>
             <div v-if="flight">
@@ -99,6 +99,10 @@ export default {
                 })
         }
 
+        function goBack() {
+            router.back()
+        }
+
         onMounted(fetchFlight)
 
         return {
@@ -110,6 +114,7 @@ export default {
             bookingModal,
             openBookingModal,
             handleCreateBooking,
+            goBack,
         }
     }
 }
