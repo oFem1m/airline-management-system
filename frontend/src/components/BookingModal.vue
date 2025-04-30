@@ -72,13 +72,19 @@ export default {
         const modalElement = ref(null)
         let modalInstance = null
 
+        function getLocalDateTime() {
+            const d = new Date()
+            const pad = n => String(n).padStart(2, '0')
+            return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+        }
+
         const isEditMode = computed(() => booking.value.id !== null)
 
         const resetForm = () => {
             booking.value = {
                 id: null,
                 passenger_id: '',
-                booking_date: '',
+                booking_date: getLocalDateTime(),
                 status: 'pending',
             }
         }
@@ -107,6 +113,9 @@ export default {
         }
 
         const open = () => {
+            if (!isEditMode.value) {
+                resetForm()
+            }
             if (!modalInstance) modalInstance = new Modal(modalElement.value)
             modalInstance.show()
         }

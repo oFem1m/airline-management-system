@@ -14,32 +14,44 @@
                 <p><strong>Время вылета:</strong> {{ flight.departure_time }}</p>
                 <p><strong>Время прибытия:</strong> {{ flight.arrival_time }}</p>
                 <p><strong>Статус:</strong> {{ flight.status }}</p>
+                <button class="btn btn-secondary" @click="openBookingModal">Купить билеты</button>
             </div>
 
             <hr class="my-4" />
+
+            <BookingModal
+                ref="bookingModal"
+                :initialBooking="null"
+                @createBooking="handleCreateBooking"
+            />
         </div>
     </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import Header from '@/components/Header.vue'
 import flightApi from '@/API/flightApi'
 import routeApi from '@/API/routeApi'
 import aircraftApi from '@/API/aircraftApi'
 import airportApi from '@/API/airportApi'
+import bookingApi from '@/API/bookingApi'
+import BookingModal from '@/components/BookingModal.vue'
 
 export default {
-    name: 'AdminFlight',
-    components: { Header },
+    name: 'FlightDetail',
+    components: { Header, BookingModal },
     setup() {
         const route = useRoute()
+        const router = useRouter()
         const flightId = parseInt(route.params.id, 10)
 
         const flight = ref(null)
         const aircraftInfo = ref('')
         const routeInfo = ref('')
+
+        const bookingModal = ref(null)
 
         const fetchFlight = () => {
             flightApi.getFlight(flightId)
@@ -69,9 +81,25 @@ export default {
             return new Date(isoStr).toLocaleString()
         }
 
-        onMounted(() => {
-            fetchFlight()
-        })
+        function openBookingModal() {
+            bookingModal.value.open()
+        }
+
+        function handleCreateBooking(newBooking) {
+            const payload = {
+                ...newBooking,
+                flight_id: flightId
+            }
+            bookingApi.createBooking(payload)
+                .then(res => {
+                    router.push({ name: 'BookingDetails', params: { id: res.data.id } })
+                })
+                .catch(err => {
+                    console.error('Ошибка при создании бронирования', err)
+                })
+        }
+
+        onMounted(fetchFlight)
 
         return {
             flightId,
@@ -79,6 +107,9 @@ export default {
             aircraftInfo,
             routeInfo,
             formatDate,
+            bookingModal,
+            openBookingModal,
+            handleCreateBooking,
         }
     }
 }
