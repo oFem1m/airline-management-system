@@ -7,8 +7,7 @@
             </router-link>
             <h1>Информация о бронировании</h1>
             <div v-if="booking" class="mt-3">
-                <p><strong>№:</strong> {{ booking.id }}</p>
-                <p><strong>Пассажир:</strong> {{ passengerName }}</p>
+                <p><strong>Пассажир:</strong> {{ getPassengerName(booking.passenger_id) }}</p>
                 <p><strong>Дата бронирования:</strong> {{ booking.booking_date }}</p>
                 <p><strong>Статус:</strong> {{ booking.status }}</p>
                 <button class="btn btn-secondary" @click="openEditBookingModal">Редактировать</button>
@@ -20,17 +19,9 @@
                 <h2>Билеты</h2>
                 <button class="btn btn-primary" @click="openTicketModal">Добавить билет</button>
             </div>
-            <div v-if="tickets.length" class="row mt-3">
-                <div
-                    v-for="ticket in tickets"
-                    :key="ticket.id"
-                    class="col-md-4 mb-3"
-                >
-                    <div
-                        class="card"
-                        style="cursor: pointer"
-                        @click="openEditTicketModal(ticket)"
-                    >
+            <div class="row mt-3">
+                <div v-for="ticket in tickets" :key="ticket.id" class="col-md-4 mb-3">
+                    <div class="card" style="cursor: pointer" @click="openEditTicketModal(ticket)">
                         <div class="card-body">
                             <h5 class="card-title">Место: {{ ticket.seat_number }}</h5>
                             <p class="card-text">
@@ -48,7 +39,6 @@
                     </div>
                 </div>
             </div>
-            <p v-else class="text-muted">Нет билетов.</p>
         </div>
 
         <BookingModal
@@ -67,7 +57,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from '@/components/Header.vue'
 import BookingModal from '@/components/BookingModal.vue'
@@ -92,54 +82,61 @@ export default {
         const selectedTicket = ref(null)
 
         const fetchBooking = () => {
-            bookingApi.getBooking(bookingId)
-                .then(res => { booking.value = res.data })
-                .catch(err => console.error('Ошибка получения бронирования', err))
+            bookingApi
+                .getBooking(bookingId)
+                .then((res) => {
+                    booking.value = res.data
+                })
+                .catch((err) => console.error('Ошибка получения бронирования', err))
         }
 
         const fetchTickets = () => {
-            ticketApi.getTicketsByBooking(bookingId)
-                .then(res => { tickets.value = res.data })
-                .catch(err => console.error('Ошибка получения билетов', err))
+            ticketApi
+                .getTicketsByBooking(bookingId)
+                .then((res) => {
+                    tickets.value = res.data
+                })
+                .catch((err) => console.error('Ошибка получения билетов', err))
         }
 
         const fetchPassengers = () => {
-            passengerApi.getPassengers()
-                .then(res => { passengers.value = res.data })
-                .catch(err => console.error('Ошибка получения пассажиров', err))
+            passengerApi
+                .getPassengers()
+                .then((res) => {
+                    passengers.value = res.data
+                })
+                .catch((err) => console.error('Ошибка получения пассажиров', err))
         }
 
         const fetchFlights = () => {
-            flightApi.getFlights()
-                .then(res => { flights.value = res.data })
-                .catch(err => console.error('Ошибка получения рейсов', err))
+            flightApi
+                .getFlights()
+                .then((res) => {
+                    flights.value = res.data
+                })
+                .catch((err) => console.error('Ошибка получения рейсов', err))
         }
 
-        const getPassengerName = id => {
-            const p = passengers.value.find(x => x.id === id)
+        const getPassengerName = (id) => {
+            const p = passengers.value.find((x) => x.id === id)
             return p ? `${p.first_name} ${p.last_name}` : '–'
         }
 
-        const getFlightNumber = id => {
-            const f = flights.value.find(x => x.id === id)
+        const getFlightNumber = (id) => {
+            const f = flights.value.find((x) => x.id === id)
             return f ? f.flight_number : '–'
         }
-
-        const passengerName = computed(() => {
-            if (!booking.value) return ''
-            const p = passengers.value.find(x => x.id === booking.value.passenger_id)
-            return p ? `${p.first_name} ${p.last_name}` : '–'
-        })
 
         const openEditBookingModal = () => {
             selectedBooking.value = { ...booking.value }
             bookingModal.value.open()
         }
 
-        const handleUpdateBooking = data => {
-            bookingApi.updateBooking(data.id, data)
+        const handleUpdateBooking = (data) => {
+            bookingApi
+                .updateBooking(data.id, data)
                 .then(fetchBooking)
-                .catch(err => console.error('Ошибка обновления бронирования', err))
+                .catch((err) => console.error('Ошибка обновления бронирования', err))
         }
 
         const openTicketModal = () => {
@@ -147,27 +144,30 @@ export default {
             ticketModal.value.open()
         }
 
-        const openEditTicketModal = ticket => {
+        const openEditTicketModal = (ticket) => {
             selectedTicket.value = { ...ticket }
             ticketModal.value.open()
         }
 
-        const handleAddTicket = data => {
-            ticketApi.addTicketForBooking(bookingId, data)
+        const handleAddTicket = (data) => {
+            ticketApi
+                .addTicketForBooking(bookingId, data)
                 .then(fetchTickets)
-                .catch(err => console.error('Ошибка добавления билета', err))
+                .catch((err) => console.error('Ошибка добавления билета', err))
         }
 
-        const handleUpdateTicket = data => {
-            ticketApi.updateTicketForBooking(data.id, data)
+        const handleUpdateTicket = (data) => {
+            ticketApi
+                .updateTicketForBooking(data.id, data)
                 .then(fetchTickets)
-                .catch(err => console.error('Ошибка обновления билета', err))
+                .catch((err) => console.error('Ошибка обновления билета', err))
         }
 
-        const removeTicket = id => {
-            ticketApi.deleteTicket(id)
+        const removeTicket = (id) => {
+            ticketApi
+                .deleteTicket(id)
                 .then(fetchTickets)
-                .catch(err => console.error('Ошибка удаления билета', err))
+                .catch((err) => console.error('Ошибка удаления билета', err))
         }
 
         const bookingModal = ref(null)
@@ -190,7 +190,6 @@ export default {
             ticketModal,
             getPassengerName,
             getFlightNumber,
-            passengerName,
             openEditBookingModal,
             handleUpdateBooking,
             openTicketModal,

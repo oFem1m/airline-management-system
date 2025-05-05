@@ -29,9 +29,9 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="passenger" class="form-label">Пассажир</label>
+                            <label for="ticket-passenger" class="form-label">Пассажир</label>
                             <select
-                                id="passenger"
+                                id="ticket-passenger"
                                 v-model.number="ticket.passenger_id"
                                 class="form-control"
                                 required
