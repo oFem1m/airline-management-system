@@ -1,0 +1,6 @@
+SERVER_ADDRESS=:8080
+DB_USER=postgres
+DB_PASSWORD=
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=Airline
