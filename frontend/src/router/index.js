@@ -14,10 +14,12 @@ import AdminPassenger from '@/views/AdminPassenger.vue'
 import AdminBookings from '@/views/AdminBookings.vue'
 import AdminBooking from '@/views/AdminBooking.vue'
 import Flight from '@/views/Flight.vue'
+import Booking from '@/views/Booking.vue'
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
     { path: '/flight/:id', name: 'Flight', component: Flight, props: true },
+    { path: '/flight/:flight_id/booking/:id', name: 'Booking', component: Booking, props: true },
     { path: '/admin', name: 'AdminPanel', component: AdminPanel },
     { path: '/admin/aircrafts', name: 'AdminAircrafts', component: AdminAircrafts },
     { path: '/admin/aircraft/:id', name: 'AdminAircraft', component: AdminAircraft, props: true },

@@ -93,6 +93,10 @@ export default {
             type: Number,
             default: null,
         },
+        price: {
+            type: Number,
+            default: 0,
+        },
         initialTicket: {
             type: Object,
             default: null,
@@ -150,7 +154,7 @@ export default {
                         passenger_id: '',
                         booking_id: props.bookingId || null,
                         seat_number: '',
-                        price: 0,
+                        price: props.price,
                     }
                 }
             },

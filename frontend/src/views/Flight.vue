@@ -92,7 +92,7 @@ export default {
             }
             bookingApi.createBooking(payload)
                 .then(res => {
-                    router.push({ name: 'BookingDetails', params: { id: res.data.id } })
+                    router.push({ name: 'Booking', params: { flight_id: flightId, id: res.data.id } })
                 })
                 .catch(err => {
                     console.error('Ошибка при создании бронирования', err)
