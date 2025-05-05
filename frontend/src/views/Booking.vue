@@ -7,8 +7,7 @@
             </a>
             <h1>Информация о бронировании</h1>
             <div v-if="booking" class="mt-3">
-                <p><strong>№:</strong> {{ booking.id }}</p>
-                <p><strong>Пассажир:</strong> {{ passengerName }}</p>
+                <p><strong>Пассажир:</strong> {{ getPassengerName(booking.passenger_id) }}</p>
                 <p><strong>Дата бронирования:</strong> {{ booking.booking_date }}</p>
                 <p><strong>Статус:</strong> {{ booking.status }}</p>
             </div>
@@ -19,15 +18,9 @@
                 <h2>Билеты</h2>
                 <button class="btn btn-primary" @click="openTicketModal">Добавить билет</button>
             </div>
-            <div v-if="tickets.length" class="row mt-3">
-                <div
-                    v-for="ticket in tickets"
-                    :key="ticket.id"
-                    class="col-md-4 mb-3"
-                >
-                    <div
-                        class="card"
-                    >
+            <div class="row mt-3">
+                <div v-for="ticket in tickets" :key="ticket.id" class="col-md-4 mb-3">
+                    <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Место: {{ ticket.seat_number }}</h5>
                             <p class="card-text">
@@ -39,7 +32,6 @@
                     </div>
                 </div>
             </div>
-            <p v-else class="text-muted">Нет билетов.</p>
         </div>
 
         <TicketModal
