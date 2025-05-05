@@ -1,41 +1,25 @@
-# frontend
+# Фронтенд для системы управления авиакомпанией
 
-This template should help get you started developing with Vue 3 in Vite.
+Команды выполнять в директории frontend
 
-## Recommended IDE Setup
+Для корректной работы требуется npm
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Также необходимо создать файл .env (см. [env.md](.env))
 
-## Customize configuration
+## Запуск
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+---
 
-## Project Setup
+### Установка необходимых пакетов
 
-```sh
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+---
 
-```sh
+### Запуск
+
+```bash
 npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```
