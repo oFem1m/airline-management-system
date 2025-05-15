@@ -88,7 +88,7 @@ export default defineComponent({
                     emit('updateCrew')
                     close()
                 })
-                .catch(err => console.error('Ошибка назначения сотрудников', err))
+                .catch(err => alert(err.response.data))
         }
 
         onMounted(fetchEmployees)

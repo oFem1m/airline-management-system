@@ -73,25 +73,25 @@ export default {
         const fetchBooking = () => {
             bookingApi.getBooking(bookingId)
                 .then(res => { booking.value = res.data })
-                .catch(err => console.error('Ошибка получения бронирования', err))
+                .catch(err => alert(err.response.data))
         }
 
         const fetchTickets = () => {
             ticketApi.getTicketsByBooking(bookingId)
                 .then(res => { tickets.value = res.data })
-                .catch(err => console.error('Ошибка получения билетов', err))
+                .catch(err => alert(err.response.data))
         }
 
         const fetchPassengers = () => {
             passengerApi.getPassengers()
                 .then(res => { passengers.value = res.data })
-                .catch(err => console.error('Ошибка получения пассажиров', err))
+                .catch(err => alert(err.response.data))
         }
 
         const fetchFlights = () => {
             flightApi.getFlights()
                 .then(res => { flights.value = res.data })
-                .catch(err => console.error('Ошибка получения рейсов', err))
+                .catch(err => alert(err.response.data))
         }
 
         const getPassengerName = id => {
@@ -118,7 +118,7 @@ export default {
         const handleAddTicket = data => {
             ticketApi.addTicketForBooking(bookingId, data)
                 .then(fetchTickets)
-                .catch(err => console.error('Ошибка добавления билета', err))
+                .catch(err => alert(err.response.data))
         }
 
         const ticketModal = ref(null)

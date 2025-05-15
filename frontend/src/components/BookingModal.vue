@@ -109,7 +109,7 @@ export default {
         const fetchPassengers = () => {
             passengerApi.getPassengers()
                 .then(res => { passengers.value = res.data })
-                .catch(err => console.error('Ошибка загрузки пассажиров', err))
+                .catch(err => alert(err.response.data))
         }
 
         const open = () => {

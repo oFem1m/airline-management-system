@@ -135,7 +135,7 @@ export default {
                     aircraft.value = response.data
                 })
                 .catch((error) => {
-                    console.error('Ошибка при получении самолёта', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -146,7 +146,7 @@ export default {
                     maintenances.value = response.data
                 })
                 .catch((error) => {
-                    console.error('Ошибка при получении обслуживаний', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -157,7 +157,7 @@ export default {
                     employees.value = response.data
                 })
                 .catch((error) => {
-                    console.error('Ошибка получения сотрудников', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -170,7 +170,7 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.error('Ошибка при получении рейсов', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -181,7 +181,7 @@ export default {
                     fetchMaintenances()
                 })
                 .catch(error => {
-                    console.error('Ошибка при удалении обслуживания', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -202,7 +202,7 @@ export default {
                     fetchMaintenances()
                 })
                 .catch((error) => {
-                    console.error('Ошибка при создании обслуживания', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -213,7 +213,7 @@ export default {
                     fetchMaintenances()
                 })
                 .catch((error) => {
-                    console.error('Ошибка при обновлении обслуживания', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -224,7 +224,7 @@ export default {
                     fetchFlights()
                 })
                 .catch((error) => {
-                    console.error('Ошибка при удалении рейса', error)
+                    alert(error.response.data)
                 })
         }
 

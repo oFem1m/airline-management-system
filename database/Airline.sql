@@ -62,9 +62,9 @@ CREATE TABLE Flights
     flight_number  VARCHAR(20) UNIQUE NOT NULL,
     aircraft_id    INT                NOT NULL,
     route_id       INT                NOT NULL,
-    departure_time TIMESTAMP          NOT NULL,
-    arrival_time   TIMESTAMP          NOT NULL,
-    status         VARCHAR(20), -- например: scheduled, departed, cancelled
+    departure_time TIMESTAMP NOT NULL,
+    arrival_time   TIMESTAMP NOT NULL,
+    status         VARCHAR(20), -- scheduled, departed, cancelled
     CONSTRAINT fk_aircraft FOREIGN KEY (aircraft_id)
         REFERENCES Aircrafts (id)
         ON DELETE CASCADE,
@@ -90,7 +90,7 @@ CREATE TABLE Booking
     id           SERIAL PRIMARY KEY,
     passenger_id INT       NOT NULL,
     booking_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    status       VARCHAR(20), -- например: confirmed, pending, cancelled
+    status       VARCHAR(20), -- confirmed, pending, cancelled
     CONSTRAINT fk_booking_passenger FOREIGN KEY (passenger_id)
         REFERENCES Passengers (id)
         ON DELETE CASCADE
@@ -102,9 +102,9 @@ CREATE TABLE Tickets
     flight_id    INT            NOT NULL,
     passenger_id INT            NOT NULL,
     booking_id   INT, -- может быть NULL, если билет не привязан к бронированию
-    seat_number  VARCHAR(10),
+    seat_number  VARCHAR(10)    NOT NULL,
     price        NUMERIC(10, 2) NOT NULL,
-    issue_date   TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    issue_date   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_ticket_flight FOREIGN KEY (flight_id)
         REFERENCES Flights (id)
         ON DELETE CASCADE,
@@ -113,7 +113,8 @@ CREATE TABLE Tickets
         ON DELETE CASCADE,
     CONSTRAINT fk_ticket_booking FOREIGN KEY (booking_id)
         REFERENCES Booking (id)
-        ON DELETE SET NULL
+        ON DELETE SET NULL,
+    CONSTRAINT unique_flight_seat UNIQUE (flight_id, seat_number)
 );
 
 CREATE TABLE Maintenance

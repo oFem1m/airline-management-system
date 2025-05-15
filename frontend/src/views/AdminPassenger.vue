@@ -133,7 +133,7 @@ export default {
                 .then(res => {
                     passenger.value = res.data
                 })
-                .catch(err => console.error('Ошибка получения пассажира', err))
+                .catch(err => alert(err.response.data))
         }
 
         const fetchBookings = () => {
@@ -141,7 +141,7 @@ export default {
                 .then(res => {
                     bookings.value = res.data
                 })
-                .catch(err => console.error('Ошибка получения бронирований', err))
+                .catch(err => alert(err.response.data))
         }
 
         const goToBooking = (bookingId) => {
@@ -155,7 +155,7 @@ export default {
                     tickets.value = res.data || []
                     fetchFlights()
                 })
-                .catch(err => console.error('Ошибка получения билетов', err))
+                .catch(err => alert(err.response.data))
         }
 
         const fetchFlights = () => {
@@ -168,7 +168,7 @@ export default {
                 .then(responses => {
                     flights.value = responses.map(r => r.data)
                 })
-                .catch(err => console.error('Ошибка получения рейсов', err))
+                .catch(err => alert(err.response.data))
         }
 
         const goToFlight = id => {
@@ -179,7 +179,7 @@ export default {
             ticketApi
                 .deleteTicket(id)
                 .then(fetchTickets)
-                .catch(err => console.error('Ошибка удаления билета', err))
+                .catch(err => alert(err.response.data))
         }
 
         const openEditModal = () => {
@@ -190,7 +190,7 @@ export default {
             passengerApi
                 .updatePassenger(upd.id, upd)
                 .then(fetchPassenger)
-                .catch(err => console.error('Ошибка обновления пассажира', err))
+                .catch(err => alert(err.response.data))
         }
 
         const getFlightNumber = id => {

@@ -87,7 +87,7 @@ export default {
                 .then((res) => {
                     booking.value = res.data
                 })
-                .catch((err) => console.error('Ошибка получения бронирования', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const fetchTickets = () => {
@@ -96,7 +96,7 @@ export default {
                 .then((res) => {
                     tickets.value = res.data
                 })
-                .catch((err) => console.error('Ошибка получения билетов', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const fetchPassengers = () => {
@@ -105,7 +105,7 @@ export default {
                 .then((res) => {
                     passengers.value = res.data
                 })
-                .catch((err) => console.error('Ошибка получения пассажиров', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const fetchFlights = () => {
@@ -114,7 +114,7 @@ export default {
                 .then((res) => {
                     flights.value = res.data
                 })
-                .catch((err) => console.error('Ошибка получения рейсов', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const getPassengerName = (id) => {
@@ -136,7 +136,7 @@ export default {
             bookingApi
                 .updateBooking(data.id, data)
                 .then(fetchBooking)
-                .catch((err) => console.error('Ошибка обновления бронирования', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const openTicketModal = () => {
@@ -153,21 +153,21 @@ export default {
             ticketApi
                 .addTicketForBooking(bookingId, data)
                 .then(fetchTickets)
-                .catch((err) => console.error('Ошибка добавления билета', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const handleUpdateTicket = (data) => {
             ticketApi
                 .updateTicketForBooking(data.id, data)
                 .then(fetchTickets)
-                .catch((err) => console.error('Ошибка обновления билета', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const removeTicket = (id) => {
             ticketApi
                 .deleteTicket(id)
                 .then(fetchTickets)
-                .catch((err) => console.error('Ошибка удаления билета', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const bookingModal = ref(null)

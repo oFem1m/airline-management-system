@@ -73,7 +73,7 @@ export default {
                 .then(([depRes, arrRes]) => {
                     routeInfo.value = `${depRes.data.city} (${depRes.data.code}) – ${arrRes.data.city} (${arrRes.data.code})`
                 })
-                .catch(console.error)
+                .catch(err => alert(err.response.data))
         }
 
         const formatDate = (isoStr) => {
@@ -95,7 +95,7 @@ export default {
                     router.push({ name: 'Booking', params: { flight_id: flightId, id: res.data.id } })
                 })
                 .catch(err => {
-                    console.error('Ошибка при создании бронирования', err)
+                    alert(err.response.data)
                 })
         }
 
