@@ -64,7 +64,7 @@ export default {
             aircraftApi
                 .getAircrafts()
                 .then((res) => (aircrafts.value = res.data))
-                .catch((err) => console.error('Ошибка получения самолётов', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const goToAircraft = (id) => {
@@ -75,14 +75,14 @@ export default {
             aircraftApi
                 .deleteAircraft(id)
                 .then(fetchAircrafts)
-                .catch((err) => console.error('Ошибка удаления самолёта', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const handleCreateAircraft = (newAircraft) =>
             aircraftApi
                 .createAircraft(newAircraft)
                 .then(() => fetchAircrafts())
-                .catch((err) => console.error('Ошибка создания самолёта', err))
+                .catch((err) => alert(err.response.data))
 
         const openCreateAircraftModal = () => {
             createAircraftModal.value.open()

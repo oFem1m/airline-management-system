@@ -141,7 +141,7 @@ export default defineComponent({
                     airports.value = res.data
                 })
                 .catch((err) => {
-                    console.error('Ошибка получения аэропортов', err)
+                    alert(err.response.data)
                 })
         }
 

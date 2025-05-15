@@ -142,43 +142,43 @@ export default {
                 .then(([depRes, arrRes]) => {
                     routeInfo.value = `${depRes.data.city} (${depRes.data.code}) – ${arrRes.data.city} (${arrRes.data.code})`
                 })
-                .catch(console.error)
+                .catch(err => alert(err.response.data))
         }
 
         const fetchRoles = () => {
             roleApi.getRoles()
                 .then(res => { roles.value = res.data })
-                .catch(err => console.error('Ошибка получения ролей', err))
+                .catch(err => alert(err.response.data))
         }
 
         const fetchCrew = () => {
             crewApi.getCrewByFlight(flightId)
                 .then(res => { crew.value = res.data || [] })
-                .catch(console.error)
+                .catch(err => alert(err.response.data))
         }
 
         const fetchTickets = () => {
             ticketApi.getTicketsByFlight(flightId)
                 .then(res => { tickets.value = res.data || [] })
-                .catch(err => console.error('Ошибка получения билетов', err))
+                .catch(err => alert(err.response.data))
         }
 
         const fetchPassengers = () => {
             passengerApi.getPassengers()
                 .then(res => { passengers.value = res.data })
-                .catch(err => console.error('Ошибка получения пассажиров', err))
+                .catch(err => alert(err.response.data))
         }
 
         const deleteCrewMember = (employeeId) => {
             crewApi.removeCrewMember(flightId, employeeId)
                 .then(fetchCrew)
-                .catch(console.error)
+                .catch(err => alert(err.response.data))
         }
 
         const removeTicket = (ticketId) => {
             ticketApi.deleteTicket(ticketId)
                 .then(fetchTickets)
-                .catch(err => console.error('Ошибка удаления билета', err))
+                .catch(err => alert(err.response.data))
         }
 
         const openCrewModal = () => crewModal.value.open()
@@ -195,18 +195,18 @@ export default {
         const handleAddTicket = (data) => {
             ticketApi.addTicket(flightId, data)
                 .then(fetchTickets)
-                .catch(err => console.error('Ошибка при создании билета', err))
+                .catch(err => alert(err.response.data))
         }
         const handleUpdateTicket = (data) => {
             ticketApi.updateTicket(data.id, data)
                 .then(fetchTickets)
-                .catch(err => console.error('Ошибка при обновлении билета', err))
+                .catch(err => alert(err.response.data))
         }
 
         const handleUpdateFlight = (updatedFlight) => {
             flightApi.updateFlight(updatedFlight.id, updatedFlight)
                 .then(fetchFlight)
-                .catch(err => console.error('Ошибка обновления рейса', err))
+                .catch(err => alert(err.response.data))
         }
 
         const getRoleName = (roleId) => {

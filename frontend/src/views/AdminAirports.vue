@@ -62,7 +62,7 @@ export default {
             airportApi
                 .getAirports()
                 .then((res) => (airports.value = res.data))
-                .catch((err) => console.error('Ошибка получения аэропортов', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const goToAirport = (airportId) => {
@@ -73,7 +73,7 @@ export default {
             airportApi
                 .deleteAirport(id)
                 .then(fetchAirports)
-                .catch((err) => console.error('Ошибка удаления аэропорта', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const openCreateModal = () => {
@@ -84,7 +84,7 @@ export default {
             airportApi
                 .createAirport(newAirport)
                 .then(() => fetchAirports())
-                .catch((err) => console.error('Ошибка создания аэропорта', err))
+                .catch((err) => alert(err.response.data))
 
         onMounted(fetchAirports)
 

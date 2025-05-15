@@ -66,7 +66,7 @@ export default {
                 .then(res => {
                     bookings.value = res.data
                 })
-                .catch(err => console.error('Ошибка получения бронирований', err))
+                .catch(err => alert(err.response.data))
         }
 
         const goToBooking = (bookingId) => {
@@ -77,7 +77,7 @@ export default {
             bookingApi
                 .deleteBooking(id)
                 .then(fetchBookings)
-                .catch((err) => console.error('Ошибка удаления бронирования', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const fetchPassengers = () => {
@@ -85,7 +85,7 @@ export default {
                 .then(res => {
                     passengers.value = res.data
                 })
-                .catch(err => console.error('Ошибка получения пассажиров', err))
+                .catch(err => alert(err.response.data))
         }
 
         const getPassengerName = id => {
@@ -102,7 +102,7 @@ export default {
                 .then(() => {
                     fetchBookings()
                 })
-                .catch(err => console.error('Ошибка создания бронирования', err))
+                .catch(err => alert(err.response.data))
         }
 
         onMounted(() => {

@@ -69,7 +69,7 @@ export default {
             passengerApi
                 .getPassengers()
                 .then((res) => { passengers.value = res.data })
-                .catch((err) => console.error('Ошибка получения пассажиров', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const goToPassenger = (id) => {
@@ -84,14 +84,14 @@ export default {
             passengerApi
                 .addPassenger(newP)
                 .then(fetchPassengers)
-                .catch((err) => console.error('Ошибка создания пассажира', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const deletePassenger = (id) => {
             passengerApi
                 .deletePassenger(id)
                 .then(fetchPassengers)
-                .catch((err) => console.error('Ошибка удаления пассажира', err))
+                .catch((err) => alert(err.response.data))
         }
 
         onMounted(fetchPassengers)

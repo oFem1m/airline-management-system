@@ -124,7 +124,7 @@ export default {
                 .then(res => {
                     passengers.value = res.data
                 })
-                .catch(err => console.error('Ошибка загрузки пассажиров', err))
+                .catch(err => alert(err.response.data))
         }
 
         const fetchFlights = () => {
@@ -132,7 +132,7 @@ export default {
                 .then(res => {
                     flights.value = res.data
                 })
-                .catch(err => console.error('Ошибка загрузки рейсов', err))
+                .catch(err => alert(err.response.data))
         }
 
         watch(

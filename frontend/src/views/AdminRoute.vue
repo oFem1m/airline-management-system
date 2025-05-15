@@ -110,7 +110,7 @@ export default defineComponent({
             airportApi
                 .getAirports()
                 .then((res) => (airports.value = res.data))
-                .catch((err) => console.error('Ошибка получения аэропортов', err))
+                .catch((err) => alert(err.response.data))
 
         const fetchAircrafts = () =>
             aircraftApi
@@ -121,7 +121,7 @@ export default defineComponent({
                         aircraftsMap.value[a.id] = a.tail_number
                     })
                 })
-                .catch((err) => console.error('Ошибка получения самолётов', err))
+                .catch((err) => alert(err.response.data))
 
         const fetchRoute = () =>
             routeApi
@@ -129,13 +129,13 @@ export default defineComponent({
                 .then((res) => {
                     routeData.value = res.data.find((r) => r.id === routeId) || null
                 })
-                .catch((err) => console.error('Ошибка получения маршрута', err))
+                .catch((err) => alert(err.response.data))
 
         const fetchFlights = () =>
             flightApi
                 .getFlightsByRoute(routeId)
                 .then((res) => (flights.value = res.data || []))
-                .catch((err) => console.error('Ошибка получения рейсов', err))
+                .catch((err) => alert(err.response.data))
 
         const getAirportLabel = (id) => {
             const a = airports.value.find((x) => x.id === id)
@@ -151,13 +151,13 @@ export default defineComponent({
             routeApi
                 .updateRoute(updatedRoute.id, updatedRoute)
                 .then(fetchRoute)
-                .catch((err) => console.error('Ошибка обновления маршрута', err))
+                .catch((err) => alert(err.response.data))
 
         const deleteFlight = (flightId) =>
             flightApi
                 .deleteFlight(flightId)
                 .then(fetchFlights)
-                .catch((err) => console.error('Ошибка удаления рейса', err))
+                .catch((err) => alert(err.response.data))
 
         const flightModal = ref(null)
         const openCreateFlightModal = () => {
@@ -168,13 +168,13 @@ export default defineComponent({
             flightApi
                 .createFlight(newFlight)
                 .then(() => fetchFlights())
-                .catch((err) => console.error('Ошибка создания рейса', err))
+                .catch((err) => alert(err.response.data))
 
         const handleUpdateFlight = (updatedFlight) =>
             flightApi
                 .updateFlight(updatedFlight.id, updatedFlight)
                 .then(() => fetchFlights())
-                .catch((err) => console.error('Ошибка обновления рейса', err))
+                .catch((err) => alert(err.response.data))
 
         onMounted(async () => {
             await fetchAirports()

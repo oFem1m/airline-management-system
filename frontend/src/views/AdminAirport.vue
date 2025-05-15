@@ -171,7 +171,7 @@ export default {
             airportApi
                 .updateAirport(updatedAirport.id, updatedAirport)
                 .then(refreshAll)
-                .catch((err) => console.error('Ошибка обновления аэропорта', err))
+                .catch((err) => alert(err.response.data))
 
         onMounted(() =>
             Promise.all([fetchAirport(), fetchAllAirports(), fetchRoutes()]).then(fetchFlights)

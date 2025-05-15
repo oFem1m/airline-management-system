@@ -62,20 +62,20 @@ export default defineComponent({
             routeApi
                 .getRoutes()
                 .then((res) => (routes.value = res.data))
-                .catch((err) => console.error('Ошибка получения маршрутов', err))
+                .catch((err) => alert(err.response.data))
         }
         const fetchAirports = () => {
             airportApi
                 .getAirports()
                 .then((res) => (airports.value = res.data))
-                .catch((err) => console.error('Ошибка получения аэропортов', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const deleteRoute = (id) => {
             routeApi
                 .deleteRoute(id)
                 .then(fetchRoutes)
-                .catch((err) => console.error('Ошибка удаления маршрута', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const openCreateRouteModal = () => createRouteModal.value.open()
@@ -85,7 +85,7 @@ export default defineComponent({
                 .then(() => {
                     fetchRoutes()
                 })
-                .catch((err) => console.error('Ошибка создания маршрута', err))
+                .catch((err) => alert(err.response.data))
         }
 
         const getAirportLabel = (id) => {

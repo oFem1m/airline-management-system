@@ -171,7 +171,7 @@ export default defineComponent({
             aircraftApi
                 .getAircrafts()
                 .then((res) => (aircrafts.value = res.data))
-                .catch((err) => console.error('Ошибка получения самолётов', err))
+                .catch((err) => alert(err.response.data))
         }
 
         onMounted(fetchAircrafts)

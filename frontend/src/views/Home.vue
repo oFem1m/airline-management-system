@@ -154,7 +154,7 @@ export default {
                         }
                     }
                 })
-                .catch(console.error)
+                .catch(err => alert(err.response.data))
         })
 
         const filteredFromAirports = computed(() =>
@@ -239,7 +239,7 @@ export default {
                     }
                     flights.value = all
                 })
-                .catch(console.error)
+                .catch(err => alert(err.response.data))
         }
 
         function formatDate(iso) {

@@ -120,7 +120,7 @@ export default {
                     employees.value = response.data
                 })
                 .catch((error) => {
-                    console.error('Ошибка получения сотрудников', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -131,7 +131,7 @@ export default {
                     roles.value = response.data
                 })
                 .catch((error) => {
-                    console.error('Ошибка получения ролей', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -142,7 +142,7 @@ export default {
                     fetchEmployees()
                 })
                 .catch((error) => {
-                    console.error('Ошибка при удалении сотрудника', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -153,7 +153,7 @@ export default {
                     fetchRoles()
                 })
                 .catch((error) => {
-                    console.error('Ошибка при удалении роли', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -174,7 +174,7 @@ export default {
                     fetchEmployees()
                 })
                 .catch((error) => {
-                    console.error('Ошибка создания сотрудника', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -185,7 +185,7 @@ export default {
                     fetchEmployees()
                 })
                 .catch((error) => {
-                    console.error('Ошибка обновления сотрудника', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -206,7 +206,7 @@ export default {
                     fetchRoles()
                 })
                 .catch((error) => {
-                    console.error('Ошибка создания роли', error)
+                    alert(error.response.data)
                 })
         }
 
@@ -217,7 +217,7 @@ export default {
                     fetchRoles()
                 })
                 .catch((error) => {
-                    console.error('Ошибка обновления роли', error)
+                    alert(error.response.data)
                 })
         }
 
